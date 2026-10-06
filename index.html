@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Math Lab 1r ESO</title>
+  <meta name="description" content="Laboratori de matemàtiques de 1r d'ESO: exercicis aleatoris amb correcció d'errors típics.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236a4cf0'/%3E%3Ctext x='14' y='46' font-family='Arial' font-weight='bold' font-size='34' fill='white'%3Ex%3C/text%3E%3Ctext x='36' y='28' font-family='Arial' font-weight='bold' font-size='20' fill='%23ffc93c'%3E2%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="#/" class="brand">
+      <span class="brand-mark">x<sup>2</sup></span>
+      <span class="brand-name">Math Lab <span class="brand-sub">1r ESO</span></span>
+    </a>
+    <nav class="topnav">
+      <span class="pill js-hdr-streak" title="Dies seguits practicant">🔥 0</span>
+      <span class="pill pill-points js-hdr-points">0 punts</span>
+      <a class="pill pill-link" href="#/progres">📊 Progrés</a>
+    </nav>
+  </header>
+
+  <main id="app" class="container"></main>
+
+  <noscript><p class="container">Aquesta aplicació necessita JavaScript.</p></noscript>
+
+  <!-- Nucli -->
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/registry.js"></script>
+  <script src="js/core/checker.js"></script>
+  <script src="js/core/storage.js"></script>
+  <script src="js/core/exercise-view.js"></script>
+
+  <!-- Temes (cada tema és una carpeta; l'ordre d'aquí és l'ordre a l'inici) -->
+  <script src="js/topics/potencies/errors.js"></script>
+  <script src="js/topics/potencies/exercises.js"></script>
+  <script src="js/topics/potencies/visual.js"></script>
+  <script src="js/topics/potencies/index.js"></script>
+  <script src="js/topics/properament.js"></script>
+
+  <!-- Vistes i arrencada -->
+  <script src="js/views/home.js"></script>
+  <script src="js/views/topic.js"></script>
+  <script src="js/views/practice.js"></script>
+  <script src="js/views/visual.js"></script>
+  <script src="js/views/challenge.js"></script>
+  <script src="js/views/progress.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
