@@ -47,7 +47,7 @@
       el.querySelector('b').textContent = value;
       if (title) el.title = title;
     };
-    set('.js-hdr-streak', streak, `${streak} ${streak === 1 ? 'dia seguit' : 'dies seguits'} practicant`);
+    set('.js-hdr-streak', streak, `${streak} ${streak === 1 ? 'dia seguit' : 'dies seguits'} complint l'objectiu`);
     document.querySelector('.js-hdr-streak small').textContent = streak === 1 ? 'dia' : 'dies';
     set('.js-hdr-stars', stars.got, `${stars.got} de ${stars.total} estrelles`);
     document.querySelector('.js-hdr-stars small').textContent = `/ ${stars.total}`;

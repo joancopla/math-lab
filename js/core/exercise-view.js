@@ -7,6 +7,7 @@
  *   onNext(),              // l'alumna vol l'exercici següent
  *   feedbackHost?,         // element on pintar el feedback (p. ex. una columna lateral); per defecte, sota l'exercici
  *   rule?,                 // regla de l'apartat (HTML), es recorda quan hi ha un error
+ *   nextLabel?,            // text del botó per passar a l'exercici següent
  * })
  */
 (function (ML) {
@@ -20,14 +21,14 @@
   function inputMarkup(ex) {
     const t = ex.input.type;
     if (t === 'number') {
-      return `<span class="ans-label"><span class="ico">edit_note</span>La teva resposta:</span>
+      return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva resposta:</span>
               <input class="ans-number" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"
                 aria-label="La teva resposta" placeholder="?">`;
     }
     if (t === 'power') {
-      return `<span class="ans-label"><span class="ico">edit_note</span>La teva potència:</span>
+      return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva potència:</span>
               <span class="ans-power">
-                <span class="ans-field"><input class="ans-base" type="text" autocomplete="off" spellcheck="false" aria-label="Base" placeholder="a"><span class="ans-badge">Base</span></span>
+                <span class="ans-field"><input class="ans-base" type="text" ${typeof ex.answer.base === 'number' ? 'inputmode="numeric"' : ''} autocomplete="off" spellcheck="false" aria-label="Base" placeholder="a"><span class="ans-badge">Base</span></span>
                 <span class="ans-field is-exp"><input class="ans-exp" type="text" inputmode="numeric" autocomplete="off" aria-label="Exponent" placeholder="n"><span class="ans-badge">Exponent</span></span>
               </span>`;
     }
@@ -51,8 +52,8 @@
         <form class="ex-form" novalidate>
           <div class="ex-input">${inputMarkup(ex)}</div>
           <div class="ex-actions">
-            ${type !== 'choice' ? '<button type="submit" class="btn btn-3d btn-blue btn-xl btn-grow"><span class="ico fill">task_alt</span>Comprova la resposta</button>' : ''}
-            ${mode === 'practice' && ex.hint ? '<button type="button" class="btn btn-3d btn-yellow btn-xl js-hint"><span class="ico fill">lightbulb</span>Una pista!</button>' : ''}
+            ${type !== 'choice' ? '<button type="submit" class="btn btn-3d btn-blue btn-xl btn-grow"><span aria-hidden="true" class="ico fill">task_alt</span>Comprova<span class="hide-sm"> la resposta</span></button>' : ''}
+            ${mode === 'practice' && ex.hint ? '<button type="button" class="btn btn-3d btn-yellow btn-xl js-hint"><span aria-hidden="true" class="ico fill">lightbulb</span>Una pista!</button>' : ''}
           </div>
           <p class="ex-warn" hidden>Escriu la teva resposta abans de comprovar.</p>
         </form>
@@ -96,7 +97,7 @@
     if (hintBtn) {
       hintBtn.addEventListener('click', () => {
         const h = card.querySelector('.ex-hint');
-        h.innerHTML = `<span class="ico fill">lightbulb</span><span><b>Pista:</b> ${ex.hint}</span>`;
+        h.innerHTML = `<span aria-hidden="true" class="ico fill">lightbulb</span><span><b>Pista:</b> ${ex.hint}</span>`;
         h.hidden = false;
         hintBtn.disabled = true;
       });
@@ -113,6 +114,21 @@
       return choiceValue;
     }
 
+    /** Diu exactament què falta, en lloc d'un missatge genèric. */
+    function invalidMessage() {
+      if (type === 'number') {
+        return inputs[0].value.trim() === ''
+          ? 'Escriu la teva resposta abans de comprovar.'
+          : 'Escriu la resposta només amb xifres (per exemple, 125).';
+      }
+      if (type === 'power') {
+        if (inputs[0].value.trim() === '') return 'Falta la base: és el nombre gran de baix.';
+        if (inputs[1].value.trim() === '') return "Falta l'exponent: és el nombre petit de dalt.";
+        return "L'exponent s'ha d'escriure amb xifres.";
+      }
+      return 'Tria una de les opcions.';
+    }
+
     function setLocked(locked) {
       inputs.forEach((i) => (i.disabled = locked));
       const sub = form.querySelector('[type="submit"]');
@@ -123,6 +139,7 @@
       if (done) return;
       const res = ML.checker.evaluate(ex, readRaw());
       if (!res.valid) {
+        warn.textContent = invalidMessage();
         warn.hidden = false;
         card.classList.remove('shake');
         void card.offsetWidth;
@@ -157,8 +174,8 @@
       });
     }
 
-    function nextButton(label = 'Següent') {
-      return `<button type="button" class="btn btn-3d btn-green btn-xl btn-block js-next">${label}<span class="ico">arrow_forward</span></button>`;
+    function nextButton(label = opts.nextLabel || 'Següent') {
+      return `<button type="button" class="btn btn-3d btn-green btn-xl btn-block js-next">${label}<span aria-hidden="true" class="ico">arrow_forward</span></button>`;
     }
 
     function wireNext() {
@@ -183,9 +200,9 @@
       const praise = U.pick(attempts === 1 ? PRAISE : PRAISE_RETRY);
       feedback.innerHTML = `
         <div class="fb fb-ok">
-          <span class="fb-tag"><span class="ico fill">stars</span>Resposta correcta</span>
+          <span class="fb-tag"><span aria-hidden="true" class="ico fill">stars</span>Resposta correcta</span>
           <div class="fb-hero">
-            <span class="fb-icon"><span class="ico fill">sentiment_very_satisfied</span></span>
+            <span class="fb-icon"><span aria-hidden="true" class="ico fill">sentiment_very_satisfied</span></span>
             <h3 class="fb-title">${praise}</h3>
           </div>
           ${ex.solution ? `<div class="fb-solution">${ex.solution}</div>` : ''}
@@ -200,20 +217,20 @@
       const canRetry = mode === 'practice';
       feedback.innerHTML = `
         <div class="fb fb-ko">
-          <span class="fb-tag"><span class="ico">psychology</span>${known ? 'Analitzem què ha passat' : 'Revisem-ho'}</span>
+          <span class="fb-tag"><span aria-hidden="true" class="ico">psychology</span>${known ? 'Analitzem què ha passat' : 'Revisem-ho'}</span>
           <div class="fb-row">
-            <span class="fb-icon"><span class="ico">${known ? 'search' : 'close'}</span></span>
+            <span class="fb-icon"><span aria-hidden="true" class="ico">${known ? 'search' : 'close'}</span></span>
             <div>
               <h3 class="fb-title">${known ? info.title : 'No és correcte'}</h3>
               <p class="fb-msg">${trap.msg}</p>
             </div>
           </div>
-          ${known && opts.rule ? `<div class="fb-rule"><span class="fb-rule-label"><span class="ico">lightbulb_circle</span>Recorda la regla</span><span class="fb-rule-math">${opts.rule}</span></div>` : ''}
+          ${known && opts.rule ? `<div class="fb-rule"><span class="fb-rule-label"><span aria-hidden="true" class="ico">lightbulb_circle</span>Recorda la regla</span><span class="fb-rule-math">${opts.rule}</span></div>` : ''}
           <div class="fb-solution" ${canRetry ? 'hidden' : ''}><b>Solució:</b> ${ex.solution || ''}</div>
           <div class="fb-actions">
             ${canRetry
-              ? `<button type="button" class="btn btn-3d btn-green btn-xl btn-block js-retry"><span class="ico">replay</span>Torna-ho a provar</button>
-                 <button type="button" class="btn btn-link js-show"><span class="ico">visibility</span>Mostra la solució i continua</button>`
+              ? `<button type="button" class="btn btn-3d btn-green btn-xl btn-block js-retry"><span aria-hidden="true" class="ico">replay</span>Torna-ho a provar</button>
+                 <button type="button" class="btn btn-link js-show"><span aria-hidden="true" class="ico">visibility</span>Mostra la solució i continua</button>`
               : nextButton('Continua')}
           </div>
         </div>`;

@@ -14,6 +14,16 @@ ctx.window = ctx;
 vm.createContext(ctx);
 
 const root = path.join(__dirname, '..');
+
+// Sintaxi de tots els scripts de l'app (també els de les vistes, que aquí no s'executen).
+(function checkSyntax(dir) {
+  for (const f of fs.readdirSync(dir)) {
+    const p = path.join(dir, f);
+    if (fs.statSync(p).isDirectory()) checkSyntax(p);
+    else if (f.endsWith('.js')) new vm.Script(fs.readFileSync(p, 'utf8'), { filename: path.relative(root, p) });
+  }
+})(path.join(root, 'js'));
+
 [
   'js/core/utils.js',
   'js/core/registry.js',

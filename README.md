@@ -9,7 +9,10 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   notació · càlcul · producte · quocient · potència d'una potència · exponents 0 i 1 · quadrats i cubs perfectes.
 - Exercicis **generats aleatòriament**. Quan la resposta és incorrecta, es **detecta l'error típic** (p. ex. «2³ = 6»,
   «a³ · a⁴ = a¹²», «a⁰ = 0», «√36 = 18») i se n'explica el motiu, amb solució pas a pas.
-- En pràctica es pot reintentar i demanar pistes. Una **estrella** per nivell quan s'hi fan 5 encerts seguits.
+- En pràctica es pot reintentar i demanar pistes. Es practica en **rondes de 10 exercicis** que acaben amb un resum
+  (encerts, punts i errors per repassar). Una **estrella** per nivell quan s'hi fan 5 encerts seguits.
+- **Objectiu diari** de 10 exercicis: la ratxa compta els dies que es compleix. Confeti i avisos en guanyar una estrella,
+  complir l'objectiu, pujar de nivell al repte o batre un rècord.
 - **Visualització interactiva**: n¹ com a línia, n² com a àrea (amb la «L» que passa de n² a (n+1)²) i n³ com a volum
   isomètric; construcció pas a pas i mini-joc «Endevina».
 - **Mode repte**: preguntes barrejades, 3 vides, dificultat adaptativa, ratxes amb multiplicador de punts, rècords i

@@ -5,13 +5,17 @@
   const U = ML.utils;
   const KEY = 'mathlab-1reso.v1';
   const STAR_RUN = 5; // encerts seguits en un nivell per guanyar-ne l'estrella
+  const DAILY_GOAL = 10; // exercicis al dia per mantenir la ratxa
+  const SESSION = 10; // exercicis d'una ronda de pràctica
 
   const fresh = () => ({
     version: 1,
     name: '',
     points: 0,
     totals: { tries: 0, ok: 0 },
-    days: { last: null, streak: 0, best: 0 },
+    days: { last: null, streak: 0, best: 0, log: [] }, // dies amb l'objectiu diari complert
+    daily: {},      // "AAAA-MM-DD" -> { done, ok }
+    askedName: false,
     skills: {},     // "tema/habilitat" -> { levels: { 1: { tries, ok, run, bestRun } }, lastAt }
     errors: {},     // "tema:idError" -> recompte
     challenge: {},  // tema -> { best, bestStreak, played }
@@ -47,19 +51,30 @@
     return s.levels[level] || (s.levels[level] = { tries: 0, ok: 0, run: 0, bestRun: 0 });
   }
 
-  /** Actualitza la ratxa de dies seguits practicant. */
-  function touchDay() {
+  /** Compta un exercici d'avui. Retorna true just quan s'arriba a l'objectiu diari. */
+  function countToday(correct) {
     const today = U.today();
+    const day = state.daily[today] || (state.daily[today] = { done: 0, ok: 0 });
+    day.done++;
+    if (correct) day.ok++;
+    const keys = Object.keys(state.daily).sort();
+    keys.slice(0, Math.max(0, keys.length - 60)).forEach((k) => delete state.daily[k]);
+    if (day.done !== DAILY_GOAL) return false;
+    // Objectiu complert: la ratxa avança (o torna a començar si es va trencar).
     const d = state.days;
-    if (d.last === today) return;
-    d.streak = d.last && U.daysBetween(d.last, today) === 1 ? d.streak + 1 : 1;
-    d.best = Math.max(d.best, d.streak);
-    d.last = today;
-    d.log = (d.log || []).concat(today).slice(-60);
+    if (d.last !== today) {
+      d.streak = d.last && U.daysBetween(d.last, today) === 1 ? d.streak + 1 : 1;
+      d.best = Math.max(d.best, d.streak);
+      d.last = today;
+      d.log = (d.log || []).concat(today).slice(-60);
+    }
+    return true;
   }
 
   ML.storage = {
     STAR_RUN,
+    DAILY_GOAL,
+    SESSION,
     get: () => state,
     onChange(fn) {
       listeners.add(fn);
@@ -71,9 +86,10 @@
       save();
     },
 
-    /** Registra el primer intent d'un exercici. Retorna les estadístiques del nivell. */
+    /** Registra el primer intent d'un exercici.
+     *  Retorna les estadístiques del nivell i `goalReached` si amb aquest exercici es completa l'objectiu diari. */
     recordAnswer({ topic, skill, level, correct, errorId, points = 0 }) {
-      touchDay();
+      const goalReached = countToday(correct);
       const ls = levelStats(topic, skill, level);
       ls.tries++;
       state.totals.tries++;
@@ -93,12 +109,29 @@
       state.skills[`${topic}/${skill}`].lastAt = Date.now();
       state.last = { topic, skill, level };
       save();
-      return ls;
+      return Object.assign({ goalReached }, ls);
+    },
+
+    setAskedName() {
+      state.askedName = true;
+      save();
+    },
+
+    /** Progrés d'avui cap a l'objectiu diari. */
+    today() {
+      const day = state.daily[U.today()] || { done: 0, ok: 0 };
+      return { done: day.done, ok: day.ok, goal: DAILY_GOAL, met: day.done >= DAILY_GOAL };
+    },
+
+    /** Estat d'un dia: 'done' (objectiu complert), 'partial' (hi ha practicat) o null. */
+    dayState(day) {
+      if ((state.days.log || []).includes(day)) return 'done';
+      const d = state.daily[day];
+      return d && d.done > 0 ? 'partial' : null;
     },
 
     /** Desa el resultat d'una partida del mode repte. Retorna si és rècord. */
     recordChallenge(topic, score, streak) {
-      touchDay();
       const c = state.challenge[topic] || (state.challenge[topic] = { best: 0, bestStreak: 0, played: 0 });
       const record = score > c.best;
       const streakRecord = streak > c.bestStreak;
@@ -127,16 +160,11 @@
       return i === -1 ? 3 : i + 1;
     },
 
-    /** Ratxa de dies (0 si s'ha trencat). */
+    /** Ratxa de dies amb l'objectiu complert (0 si s'ha trencat: ni avui ni ahir). */
     dayStreak() {
       const d = state.days;
       if (!d.last) return 0;
       return U.daysBetween(d.last, U.today()) <= 1 ? d.streak : 0;
-    },
-
-    /** Si s'ha practicat un dia concret (AAAA-MM-DD). */
-    practicedOn(day) {
-      return (state.days.log || []).includes(day) || state.days.last === day;
     },
 
     /** Estrelles aconseguides i possibles en tots els temes disponibles. */
@@ -165,6 +193,7 @@
       const name = state.name;
       state = fresh();
       state.name = name;
+      state.askedName = true;
       save();
     },
   };

@@ -87,7 +87,8 @@
         mode: 'challenge',
         rule: skill.rule,
         onFirstAnswer: ({ correct, errorId, msg }) => {
-          ML.storage.recordAnswer({ topic: t.id, skill: skill.id, level, correct, errorId });
+          const rec = ML.storage.recordAnswer({ topic: t.id, skill: skill.id, level, correct, errorId });
+          if (rec.goalReached) ML.celebrate.toast('🔥 Objectiu d\'avui complert!', { kind: 'gold' });
           let gain = 0;
           if (correct) {
             g.ok++;
@@ -95,7 +96,12 @@
             g.bestStreak = Math.max(g.bestStreak, g.streak);
             gain = 10 * level * multiplier();
             g.score += gain;
-            if (g.streak % LEVEL_UP_EVERY === 0) g.level = Math.min(3, g.level + 1);
+            if (g.streak % LEVEL_UP_EVERY === 0) {
+              const before = g.level;
+              g.level = Math.min(3, g.level + 1);
+              if (g.level > before) ML.celebrate.toast(`⚡ Nivell ${g.level}! Ara cada encert val més.`, { kind: 'blue' });
+              else ML.celebrate.toast(`🔥 ${g.streak} seguits! Multiplicador ×${multiplier()}`, { kind: 'blue' });
+            }
           } else {
             g.lives--;
             g.streak = 0;
@@ -114,6 +120,7 @@
 
     function end() {
       const res = ML.storage.recordChallenge(t.id, g.score, g.bestStreak);
+      if (res.record && g.score > 0) ML.celebrate.confetti(90);
       root.innerHTML = `
         ${ML.ui.crumbs([['Inici', '#/'], [t.title, `#/tema/${t.id}`], ['Mode repte']])}
         <section class="challenge-end">

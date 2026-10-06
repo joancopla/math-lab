@@ -31,22 +31,31 @@
     const started = s.totals.tries > 0;
     const intro = s.last
       ? `L'última vegada vas practicar <b>${ML.topics.skill(s.last.topic, s.last.skill).title.toLowerCase()}</b>. Continuem?`
-      : 'Practica al teu ritme. Quan t\'equivoquis, et diré quin error has fet i com arreglar-lo.';
+      : 'Fes 10 exercicis cada dia al teu ritme. Quan t\'equivoquis, et diré quin error has fet i com arreglar-lo.';
+    const today = ML.storage.today();
+    const C = 2 * Math.PI * 26;
+    const frac = Math.min(1, today.done / today.goal);
+    const ring = `
+      <div class="daily-ring ${today.met ? 'is-met' : ''}">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="26" class="ring-bg"/>
+          <circle cx="32" cy="32" r="26" class="ring-fg" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/>
+        </svg>
+        <span class="ring-num">${today.met ? '✓' : `${today.done}<small>/${today.goal}</small>`}</span>
+        <span class="ring-text"><b>Objectiu d'avui</b>${today.met
+          ? 'Complert! La ratxa continua.'
+          : today.done === 0 ? `${today.goal} exercicis per mantenir la ratxa` : `Te'n falten ${today.goal - today.done}`}</span>
+      </div>`;
     return `
       <section class="hero-banner">
         <div class="hero-left">
           <h1>${s.name ? `Hola, ${U.esc(s.name)}!` : 'Hola!'} 👋</h1>
           <p class="hero-intro">${intro}</p>
-          ${s.name ? '' : `
-            <form class="hero-name js-name">
-              <label for="name-in">Com et dius?</label>
-              <input id="name-in" type="text" maxlength="30" autocomplete="off" placeholder="El teu nom">
-              <button class="btn btn-small btn-white">Desa</button>
-            </form>`}
+          ${ring}
           ${started ? `
             <div class="hero-chips">
-              <span><span class="ico fill">check_circle</span>${s.totals.ok} encerts al primer intent</span>
-              <span><span class="ico fill">star</span>${totals.got} de ${totals.total} estrelles</span>
+              <span><span aria-hidden="true" class="ico fill">check_circle</span>${s.totals.ok} encerts al primer intent</span>
+              <span><span aria-hidden="true" class="ico fill">star</span>${totals.got} de ${totals.total} estrelles</span>
             </div>` : ''}
         </div>
         <div class="hero-card">
@@ -56,14 +65,14 @@
               <h2>${cur.skill.title}</h2>
               ${cur.skill.rule ? `<p class="rule">${cur.skill.rule}</p>` : ''}
             </div>
-            <span class="hero-card-icon"><span class="ico fill">bolt</span></span>
+            <span class="hero-card-icon"><span aria-hidden="true" class="ico fill">bolt</span></span>
           </div>
           <div class="meter">
             <div class="meter-label"><span>Cap a l'estrella</span><b>${run} de ${STAR} seguits</b></div>
             <div class="meter-track"><div class="meter-fill" style="width:${(100 * run) / STAR}%"></div></div>
           </div>
           <a class="btn btn-3d btn-blue btn-xl" href="#/tema/${topic.id}/practica/${cur.skill.id}/${cur.level}">
-            ${started ? 'Continua' : 'Comença'} <span class="ico fill">play_circle</span>
+            ${started ? 'Continua' : 'Comença'} <span aria-hidden="true" class="ico fill">play_circle</span>
           </a>
         </div>
       </section>`;
@@ -80,7 +89,7 @@
       return `
         <li class="quest quest-${state}">
           <a class="quest-node" href="${href}" aria-label="${U.esc(sk.title)}">
-            ${icon ? `<span class="ico fill">${icon}</span>` : `<span class="quest-num">${i + 1}</span>`}
+            ${icon ? `<span aria-hidden="true" class="ico fill">${icon}</span>` : `<span class="quest-num">${i + 1}</span>`}
           </a>
           <a class="quest-card" href="${href}">
             <span class="quest-head">
@@ -99,12 +108,12 @@
             <p class="eyebrow"><span class="dot"></span>${topic.title}</p>
             <h2>El camí de les ${topic.title.toLowerCase()}</h2>
           </div>
-          <div class="goal"><span class="ico fill">emoji_events</span><span><small>Objectiu</small><b>${totals} de ${topic.skills.length * 3} estrelles</b></span></div>
+          <div class="goal"><span aria-hidden="true" class="ico fill">emoji_events</span><span><small>Objectiu</small><b>${totals} de ${topic.skills.length * 3} estrelles</b></span></div>
         </div>
         <ol class="quest-map">${nodes}</ol>
         <div class="panel-foot">
           <span>Cada estrella vol 5 encerts seguits en un nivell.</span>
-          <a class="btn btn-3d btn-purple" href="#/tema/${topic.id}"><span class="ico">menu_book</span>Tots els apartats</a>
+          <a class="btn btn-3d btn-purple" href="#/tema/${topic.id}"><span aria-hidden="true" class="ico">menu_book</span>Tots els apartats</a>
         </div>
       </section>`;
   }
@@ -119,21 +128,26 @@
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
       const key = U.today(d);
-      const done = ML.storage.practicedOn(key);
-      const cls = key === todayKey ? (done ? 'is-today is-done' : 'is-today') : key > todayKey ? 'is-future' : done ? 'is-done' : 'is-miss';
-      const mark = done ? '<span class="ico">check</span>' : key === todayKey ? '<span class="ico fill">local_fire_department</span>' : '<i></i>';
-      return `<li class="${cls}"><span>${label}</span>${mark}</li>`;
+      const st = ML.storage.dayState(key);
+      const isToday = key === todayKey;
+      const cls = [isToday ? 'is-today' : '', st === 'done' ? 'is-done' : st === 'partial' ? 'is-partial' : key > todayKey ? 'is-future' : 'is-miss'].join(' ');
+      const mark = st === 'done' ? '<span aria-hidden="true" class="ico">check</span>'
+        : isToday ? '<span aria-hidden="true" class="ico fill">local_fire_department</span>' : '<i></i>';
+      const what = st === 'done' ? 'objectiu complert' : st === 'partial' ? 'hi ha practicat, sense arribar a l\'objectiu' : key > todayKey ? 'encara no ha arribat' : 'no hi ha practicat';
+      return `<li class="${cls}" aria-label="${label}: ${what}"><span>${label}</span>${mark}</li>`;
     }).join('');
-    const msg = ML.storage.practicedOn(todayKey)
-      ? 'Avui ja has practicat. Torna demà per allargar la ratxa!'
-      : streak > 0 ? 'Fes un exercici avui per no trencar la ratxa!' : 'Fes un exercici avui per començar una ratxa.';
+    const goal = ML.storage.today();
+    const msg = goal.met
+      ? 'Objectiu d\'avui complert. Torna demà per allargar la ratxa!'
+      : streak > 0 ? `Fes ${goal.goal - goal.done} exercicis més avui per no trencar la ratxa!`
+        : `Completa ${goal.goal} exercicis avui per començar una ratxa.`;
     return `
       <section class="panel side-card">
         <div class="side-head">
           <span class="side-emoji">🔥</span>
           <div><h3>${streak} ${streak === 1 ? 'dia seguit' : 'dies seguits'}</h3><p>${msg}</p></div>
         </div>
-        <ol class="week" aria-label="Dies practicats aquesta setmana">${days}</ol>
+        <ol class="week" aria-label="La teva setmana">${days}</ol>
       </section>`;
   }
 
@@ -147,7 +161,7 @@
             ? `Rècord: ${ch.best} punts. Millor ratxa: ${ch.bestStreak} encerts.`
             : 'Preguntes barrejades i 3 vides. Fins on arribaràs?'}</p></div>
         </div>
-        <a class="btn btn-3d btn-yellow btn-block" href="#/repte/${topic.id}"><span class="ico fill">bolt</span>${ch ? 'Supera el rècord' : 'Accepta el repte'}</a>
+        <a class="btn btn-3d btn-yellow btn-block" href="#/repte/${topic.id}"><span aria-hidden="true" class="ico fill">bolt</span>${ch ? 'Supera el rècord' : 'Accepta el repte'}</a>
       </section>`;
   }
 
@@ -173,7 +187,7 @@
                   <span class="world-icon" style="--topic:${t.color}">${t.icon}</span>
                   <h3>${t.title}</h3>
                   <p>${t.description}</p>
-                  <span class="btn btn-block btn-disabled" aria-disabled="true"><span class="ico">lock</span>Aviat</span>
+                  <span class="btn btn-block btn-disabled" aria-disabled="true"><span aria-hidden="true" class="ico">lock</span>Aviat</span>
                 </article>`;
             }
             const got = t.skills.reduce((n, sk) => n + starCount(t.id, sk.id), 0);
@@ -208,15 +222,5 @@
       </div>
       ${worlds()}`;
 
-    const form = root.querySelector('.js-name');
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const v = form.querySelector('input').value.trim();
-        if (!v) return;
-        ML.storage.setName(v);
-        ML.app.render();
-      });
-    }
   };
 })(window.MathLab);
