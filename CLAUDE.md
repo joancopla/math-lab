@@ -1,0 +1,33 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+Math Lab 1r ESO: a static, backend-free math practice web app in **Catalan** for a 12-year-old student (1r d'ESO). All user-facing text, code comments and the README are in Catalan; keep it that way. The first topic is *potències*; more topics (divisibilitat, enters, fraccions, decimals) are planned as placeholders.
+
+## Commands
+
+- Run the app: open `index.html` directly in a browser (file:// works, no server needed). For browser automation, any static server works, e.g. `npx http-server .`.
+- Tests: `node tests/generators.test.js [N]` generates N exercises (default 3000) per skill × level and checks them. There's no build, linter, package.json or dependencies.
+- There is no per-test filter. To test one skill, temporarily lower N or narrow the loop in the test file.
+
+## Architecture
+
+**Plain classic scripts, not ES modules.** This is deliberate so the app works from `file://`. Everything hangs off the global `window.MathLab` (`ML`), and each file is an IIFE. Load order in `index.html` matters: core → topics → views → `app.js`. A new script must be added to `index.html` **and**, if it's topic logic, to the file list in `tests/generators.test.js`. The test runs those files in a Node `vm` context, so topic files must not touch the DOM at load time (only inside `mount`).
+
+**Core (`js/core/`)**, shared by all topics:
+- `registry.js`: `ML.topics.register(def)`. A topic def has `id, title, icon, color, description, errors, skills[], visuals[]` (or `comingSoon: true`). Each skill has `generate(level)` for levels 1–3.
+- `checker.js`: the central idea. An exercise declares `input.type` (`number` | `power` | `choice`), `answer` and `traps`. A trap is a predictable wrong answer: `{match | test, id, msg}`. `evaluate()` compares values by normalized keys (`power` is `"base^exp"`, and the base may be a letter). It ignores any trap whose match equals the answer, and otherwise returns the first matching trap. That's how the app knows *which* typical mistake the student made. For `power` answers there's a generic fallback (`forma_equivalent`, `base_canviada`, `exponent_incorrecte`); anything else falls back to `altre`.
+- `exercise-view.js`: `ML.mountExercise(container, ex, {topic, mode, onFirstAnswer, onNext})` renders any exercise. `practice` mode allows retries and hints; `challenge` mode gives a single attempt. `onFirstAnswer` fires after the feedback is rendered, so callers can tweak it.
+- `storage.js`: the only code that touches `localStorage` (key `mathlab-1reso.v1`). It tracks per skill/level stats (`run`/`bestRun`; a star needs `STAR_RUN` = 5 correct answers in a row), per-error counts keyed `"topic:errorId"`, the daily streak, challenge records and points.
+
+**Topics (`js/topics/<id>/`)**: `errors.js` holds the error catalog (`id → {title, explain}`, shown on the progress page). `exercises.js` holds the generators, built with the `numEx`/`powEx`/`choiceEx` helpers and `t(match, id, msg)` for traps. `visual.js` (optional) provides `mount(container) → cleanup`. `index.js` registers the topic. Every trap `id` must exist in the topic's `errors` or in `checker.coreErrors`, and the test enforces this. `js/topics/properament.js` registers the "coming soon" topics: remove an entry when you implement that topic.
+
+**Views and router**: `js/app.js` is a hash router (`#/`, `#/tema/:id`, `#/tema/:id/practica/:skill/:level`, `#/tema/:id/visual/:vid`, `#/repte/:id`, `#/progres`). Views are `ML.views.x(root, ...params)` and may return a cleanup function. The challenge mode, progress page and stars work automatically for any registered topic.
+
+## Conventions
+
+- Math HTML helpers live in `ML.utils`: `pw(base, exp)` for powers, `repeat`, `frac`, and `fmt` for Catalan number formatting (`.` thousands separator from 5 digits up). `parseNumber` accepts `1.000`, `1 000` and `−3`.
+- Catalan text follows post-2017 normative rules (e.g. "dona", not "dóna"), and multiplication is written with `·`. To review Catalan content, use the user's `corrector-catala-adversari` skill if it's available.
+- After changing generators, run the test. It checks that correct answers validate, no trap is accepted as correct, there's no `NaN`/`undefined` in texts and choice options are unique.
