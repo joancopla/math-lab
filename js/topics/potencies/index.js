@@ -14,12 +14,13 @@
     id: 'potencies',
     title: 'Potències',
     icon: 'a<sup>n</sup>',
-    color: '#6a4cf0',
+    color: '#2563eb',
     description: 'Multiplicacions repetides: notació, càlcul, operacions amb potències i quadrats i cubs perfectes.',
     errors: P.errors,
     skills: [
       {
         id: 'notacio',
+        rule: `${H('a','n')} = a · a · … · a`,
         title: 'Què és una potència',
         summary: 'Base, exponent i com s\'escriu i es llegeix una potència.',
         levels: ['Productes en forma de potència', 'Potències, productes i sumes', 'Lectura i bases diferents'],
@@ -36,6 +37,7 @@
       },
       {
         id: 'calcul',
+        rule: `${H(2,4)} = 2 · 2 · 2 · 2 = 16`,
         title: 'Calcular potències',
         summary: 'Trobar el valor d\'una potència, potències de 10 i expressions.',
         levels: ['Bases i exponents petits', 'Més grans i potències de 10', 'Expressions amb potències'],
@@ -49,6 +51,7 @@
       },
       {
         id: 'producte',
+        rule: `${H('a','m')} · ${H('a','n')} = ${H('a','m+n')}`,
         title: 'Producte de potències',
         summary: 'Multiplicar potències de la mateixa base.',
         levels: ['Dues potències', 'Tres factors, lletres i exponent 1', 'Exponents que falten'],
@@ -61,6 +64,7 @@
       },
       {
         id: 'quocient',
+        rule: `${H('a','m')} : ${H('a','n')} = ${H('a','m−n')}`,
         title: 'Quocient de potències',
         summary: 'Dividir potències de la mateixa base.',
         levels: ['Dues potències', 'Fraccions, exponent 1 i exponents iguals', 'Operacions combinades'],
@@ -73,6 +77,7 @@
       },
       {
         id: 'potencia_potencia',
+        rule: `${H('(' + H('a','m') + ')','n')} = ${H('a','m·n')}`,
         title: 'Potència d\'una potència',
         summary: 'Elevar una potència a un altre exponent.',
         levels: ['Una potència de potència', 'Tres exponents, lletres i combinades', 'Exponents que falten i canvis de base'],
@@ -85,6 +90,7 @@
       },
       {
         id: 'exponents_0_1',
+        rule: `${H('a',1)} = a &nbsp; ${H('a',0)} = 1`,
         title: 'Exponent 0 i exponent 1',
         summary: 'Què passa quan l\'exponent és 0 o 1, i les bases 0 i 1.',
         levels: ['a⁰ i a¹', 'Bases 0 i 1, exponents que falten', 'Expressions'],
@@ -96,6 +102,7 @@
       },
       {
         id: 'quadrats_cubs',
+        rule: `${H(7,2)} = 49 &nbsp; ${H(4,3)} = 64`,
         title: 'Quadrats i cubs perfectes',
         summary: 'Reconèixer-los, calcular arrels i situar nombres entre quadrats.',
         levels: ['Quadrats fins a 100', 'Quadrats fins a 400 i cubs', 'Entre quadrats, cubs fins a 1.000'],

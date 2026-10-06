@@ -28,16 +28,40 @@
     updateHeader();
   }
 
+  function navSection(path) {
+    if (path === '/' || path === '') return 'home';
+    if (path.startsWith('/progres')) return 'progress';
+    if (path.startsWith('/repte')) return 'challenge';
+    if (path.includes('/visual/')) return 'visual';
+    if (path.startsWith('/tema')) return 'topic';
+    return '';
+  }
+
   function updateHeader() {
     const s = ML.storage.get();
     const streak = ML.storage.dayStreak();
-    const st = document.querySelector('.js-hdr-streak');
-    const pt = document.querySelector('.js-hdr-points');
-    if (st) {
-      st.textContent = `🔥 ${streak}`;
-      st.title = `${streak} ${streak === 1 ? 'dia seguit' : 'dies seguits'} practicant`;
-    }
-    if (pt) pt.textContent = `${U.fmt(s.points)} punts`;
+    const stars = ML.storage.starTotals();
+    const set = (sel, value, title) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      el.querySelector('b').textContent = value;
+      if (title) el.title = title;
+    };
+    set('.js-hdr-streak', streak, `${streak} ${streak === 1 ? 'dia seguit' : 'dies seguits'} practicant`);
+    document.querySelector('.js-hdr-streak small').textContent = streak === 1 ? 'dia' : 'dies';
+    set('.js-hdr-stars', stars.got, `${stars.got} de ${stars.total} estrelles`);
+    document.querySelector('.js-hdr-stars small').textContent = `/ ${stars.total}`;
+    set('.js-hdr-points', U.fmt(s.points), `${U.fmt(s.points)} punts`);
+    const av = document.querySelector('.js-hdr-avatar');
+    if (av) av.textContent = s.name ? s.name.trim().charAt(0).toUpperCase() : '?';
+
+    const section = navSection(decodeURIComponent(location.hash.replace(/^#/, '')));
+    document.querySelectorAll('.subnav a').forEach((a) => {
+      const on = a.dataset.nav === section;
+      a.classList.toggle('is-on', on);
+      if (on) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
   }
 
   ML.app = { render };

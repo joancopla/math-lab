@@ -5,26 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Math Lab 1r ESO</title>
   <meta name="description" content="Laboratori de matemàtiques de 1r d'ESO: exercicis aleatoris amb correcció d'errors típics.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236a4cf0'/%3E%3Ctext x='14' y='46' font-family='Arial' font-weight='bold' font-size='34' fill='white'%3Ex%3C/text%3E%3Ctext x='36' y='28' font-family='Arial' font-weight='bold' font-size='20' fill='%23ffc93c'%3E2%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='14' y='46' font-family='Arial' font-weight='bold' font-size='34' fill='white'%3Ex%3C/text%3E%3Ctext x='36' y='28' font-family='Arial' font-weight='bold' font-size='20' fill='%23fbbf24'%3E2%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&display=block" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="topbar">
-    <a href="#/" class="brand">
-      <span class="brand-mark">x<sup>2</sup></span>
-      <span class="brand-name">Math Lab <span class="brand-sub">1r ESO</span></span>
-    </a>
-    <nav class="topnav">
-      <span class="pill js-hdr-streak" title="Dies seguits practicant">🔥 0</span>
-      <span class="pill pill-points js-hdr-points">0 punts</span>
-      <a class="pill pill-link" href="#/progres">📊 Progrés</a>
+    <div class="topbar-row">
+      <a href="#/" class="brand" aria-label="Math Lab 1r ESO, inici">
+        <span class="brand-mark"><span class="ico fill">rocket_launch</span></span>
+        <span class="brand-name">Math Lab <span class="brand-sub">1r ESO</span></span>
+      </a>
+      <div class="hud-chips">
+        <span class="chip chip-streak js-hdr-streak" title="Dies seguits practicant"><span class="ico fill">local_fire_department</span><b>0</b><small>dies</small></span>
+        <span class="chip chip-stars js-hdr-stars" title="Estrelles aconseguides"><span class="ico fill">star</span><b>0</b><small>/ 21</small></span>
+        <span class="chip chip-points js-hdr-points" title="Punts"><span class="ico fill">bolt</span><b>0</b><small>punts</small></span>
+        <a class="avatar js-hdr-avatar" href="#/progres" title="El meu progrés" aria-label="El meu progrés">?</a>
+      </div>
+    </div>
+    <nav class="subnav" aria-label="Seccions">
+      <a href="#/" data-nav="home"><span class="ico">explore</span>Inici</a>
+      <a href="#/tema/potencies" data-nav="topic"><span class="ico">functions</span>Potències</a>
+      <a href="#/tema/potencies/visual/arees-volums" data-nav="visual"><span class="ico">view_in_ar</span>Visualització</a>
+      <a href="#/repte/potencies" data-nav="challenge" class="is-gold"><span class="ico fill">military_tech</span>Mode repte</a>
+      <a href="#/progres" data-nav="progress"><span class="ico">leaderboard</span>El meu progrés</a>
     </nav>
   </header>
 
   <main id="app" class="container"></main>
+
+  <footer class="footer">Math Lab 1r ESO</footer>
 
   <noscript><p class="container">Aquesta aplicació necessita JavaScript.</p></noscript>
 

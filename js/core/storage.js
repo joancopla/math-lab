@@ -55,6 +55,7 @@
     d.streak = d.last && U.daysBetween(d.last, today) === 1 ? d.streak + 1 : 1;
     d.best = Math.max(d.best, d.streak);
     d.last = today;
+    d.log = (d.log || []).concat(today).slice(-60);
   }
 
   ML.storage = {
@@ -131,6 +132,22 @@
       const d = state.days;
       if (!d.last) return 0;
       return U.daysBetween(d.last, U.today()) <= 1 ? d.streak : 0;
+    },
+
+    /** Si s'ha practicat un dia concret (AAAA-MM-DD). */
+    practicedOn(day) {
+      return (state.days.log || []).includes(day) || state.days.last === day;
+    },
+
+    /** Estrelles aconseguides i possibles en tots els temes disponibles. */
+    starTotals() {
+      let got = 0;
+      let total = 0;
+      ML.topics.available().forEach((t) => t.skills.forEach((s) => {
+        got += ML.storage.stars(t.id, s.id).filter(Boolean).length;
+        total += 3;
+      }));
+      return { got, total };
     },
 
     topErrors(topic, n = 5) {

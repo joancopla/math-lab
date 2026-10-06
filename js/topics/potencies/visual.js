@@ -104,9 +104,9 @@ window.MathLab.potencies = window.MathLab.potencies || {};
       <div class="viz">
         <div class="viz-controls">
           <div class="seg" role="tablist" aria-label="Exponent">
-            <button type="button" data-exp="1" role="tab">n<sup>1</sup> · línia</button>
-            <button type="button" data-exp="2" role="tab">n<sup>2</sup> · àrea</button>
-            <button type="button" data-exp="3" role="tab">n<sup>3</sup> · volum</button>
+            <button type="button" data-exp="1" role="tab">Línia <small>n<sup>1</sup></small></button>
+            <button type="button" data-exp="2" role="tab">Àrea <small>n<sup>2</sup></small></button>
+            <button type="button" data-exp="3" role="tab">Volum <small>n<sup>3</sup></small></button>
           </div>
           <label class="slider">
             <span>Base: <b class="js-n"></b></span>
@@ -277,7 +277,7 @@ window.MathLab.potencies = window.MathLab.potencies || {};
       } else if (guess === total) {
         quiz = null;
         render();
-        $('.viz-info').insertAdjacentHTML('afterbegin', `<p class="ok-banner">✅ Correcte! ${H(n, exp)} = ${total}</p>`);
+        $('.viz-info').insertAdjacentHTML('afterbegin', `<p class="ok-banner">Correcte! ${H(n, exp)} = ${total} ✓</p>`);
       } else if (guess === n * exp) {
         msg.innerHTML = `Compte: has fet ${n} · ${exp}. Però hi ha ${exp === 3 ? `${n} capes de ${n} · ${n}` : `${n} files de ${n}`}. Torna-ho a provar!`;
       } else {

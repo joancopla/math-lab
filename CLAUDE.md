@@ -28,6 +28,8 @@ Math Lab 1r ESO: a static, backend-free math practice web app in **Catalan** for
 
 ## Conventions
 
+- The visual design follows Stitch mockups from the user (a game style: rounded cards, 3D buttons, Space Grotesk + Plus Jakarta Sans). Icons are Material Symbols ligatures: `<span class="ico">name</span>`, and `ico fill` gives the filled style. Each skill has a `rule` (HTML formula), which is shown on the home path, in the practice header and in error feedback. `mountExercise` accepts `feedbackHost`, which the practice view uses for its two-column layout.
+- Don't add features that only look real: the mockups included class rankings, a weekly chest, XP levels, a daily mission and an institution/Generalitat footer, and none of them were built. They need a backend, or they'd be fake or impersonation.
 - Math HTML helpers live in `ML.utils`: `pw(base, exp)` for powers, `repeat`, `frac`, and `fmt` for Catalan number formatting (`.` thousands separator from 5 digits up). `parseNumber` accepts `1.000`, `1 000` and `−3`.
 - Catalan text follows post-2017 normative rules (e.g. "dona", not "dóna"), and multiplication is written with `·`. To review Catalan content, use the user's `corrector-catala-adversari` skill if it's available.
 - After changing generators, run the test. It checks that correct answers validate, no trap is accepted as correct, there's no `NaN`/`undefined` in texts and choice options are unique.

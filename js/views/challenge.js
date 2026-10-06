@@ -29,7 +29,7 @@
             <li>🔥 Cada ${LEVEL_UP_EVERY} encerts seguits, la dificultat puja i guanyes més punts.</li>
             <li>💥 Si falles, la ratxa torna a 0 (però veuràs l'explicació de l'error).</li>
           </ul>
-          ${ch ? `<p class="record">Rècord: <b>${ch.best}</b> punts · Millor ratxa: <b>${ch.bestStreak}</b> · Partides: ${ch.played}</p>` : ''}
+          ${ch ? `<p class="record">El teu rècord és de <b>${ch.best}</b> punts, amb una ratxa màxima de <b>${ch.bestStreak}</b> encerts seguits.</p>` : ''}
           <button class="btn btn-primary btn-big js-start">Comença!</button>
         </section>`;
       root.querySelector('.js-start').addEventListener('click', start);
@@ -79,12 +79,13 @@
       const level = g.level;
       g.count++;
       hud();
-      root.querySelector('.hud-skill').textContent = `Pregunta ${g.count} · ${skill.title}`;
+      root.querySelector('.hud-skill').textContent = `Pregunta ${g.count}: ${skill.title.toLowerCase()}`;
       const ex = skill.generate(level);
 
       ML.mountExercise(root.querySelector('.ex-host'), ex, {
         topic: t.id,
         mode: 'challenge',
+        rule: skill.rule,
         onFirstAnswer: ({ correct, errorId, msg }) => {
           ML.storage.recordAnswer({ topic: t.id, skill: skill.id, level, correct, errorId });
           let gain = 0;
@@ -104,7 +105,7 @@
           hud(gain);
           if (g.lives <= 0) {
             const nb = root.querySelector('.js-next');
-            if (nb) nb.textContent = 'Veure resultats →';
+            if (nb) nb.textContent = 'Mostra els resultats';
           }
         },
         onNext: next,
@@ -122,7 +123,7 @@
             <div class="stat"><span class="stat-big">🔥 ${g.bestStreak}</span><span>millor ratxa${res.streakRecord ? ' (rècord!)' : ''}</span></div>
             <div class="stat"><span class="stat-big">${g.ok}/${g.count}</span><span>encerts</span></div>
           </div>
-          <p class="record">Rècord: ${res.best} punts · Millor ratxa: ${res.bestStreak}</p>
+          <p class="record">El teu rècord: ${res.best} punts. Ratxa màxima: ${res.bestStreak}.</p>
           <div class="end-actions">
             <button class="btn btn-primary js-again">Torna a jugar</button>
             <a class="btn btn-ghost" href="#/tema/${t.id}">Torna al tema</a>
@@ -135,7 +136,7 @@
                 return `
                   <article class="mistake">
                     <div class="mistake-q">${m.prompt}</div>
-                    <p class="mistake-title">🔎 ${m.errorId === 'altre' ? 'Error' : info.title}</p>
+                    <p class="mistake-title">${m.errorId === 'altre' ? 'No era correcte' : 'Compte! ' + info.title}</p>
                     <p>${m.msg}</p>
                     <p class="mistake-sol"><b>Solució:</b> ${m.solution}</p>
                   </article>`;

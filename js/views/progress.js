@@ -47,7 +47,7 @@
               </tbody>
             </table>
           </div>
-          <p class="record">🏆 Mode repte: ${ch ? `rècord ${ch.best} punts · millor ratxa ${ch.bestStreak} · ${ch.played} partides` : 'encara no hi has jugat'}</p>`;
+          <p class="record">🏆 Mode repte: ${ch ? `rècord de ${ch.best} punts i ratxa màxima de ${ch.bestStreak}, en ${ch.played} ${ch.played === 1 ? 'partida' : 'partides'}` : 'encara no hi has jugat'}</p>`;
       }).join('')}
 
       <h2 class="section-title">Errors que més repeteixo</h2>

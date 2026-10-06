@@ -36,7 +36,7 @@
           <span class="action-emoji">🏆</span>
           <div>
             <h3>Mode repte</h3>
-            <p>${ch ? `Rècord: <b>${ch.best}</b> punts · Millor ratxa: <b>${ch.bestStreak}</b>` : 'Preguntes barrejades, 3 vides i ratxes. T\'hi atreveixes?'}</p>
+            <p>${ch ? `El teu rècord: <b>${ch.best}</b> punts. Ratxa màxima: <b>${ch.bestStreak}</b>.` : 'Preguntes barrejades, 3 vides i ratxes. T\'hi atreveixes?'}</p>
           </div>
         </a>
       </div>
