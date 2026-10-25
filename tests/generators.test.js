@@ -44,6 +44,11 @@ const root = path.join(__dirname, '..');
   'js/topics/enters/recta.js',
   'js/topics/enters/fitxes.js',
   'js/topics/enters/index.js',
+  'js/topics/fraccions/errors.js',
+  'js/topics/fraccions/exercises.js',
+  'js/topics/fraccions/barres.js',
+  'js/topics/fraccions/suma.js',
+  'js/topics/fraccions/index.js',
   'js/topics/properament.js',
 ].forEach((f) => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f }));
 
@@ -59,10 +64,12 @@ const fail = (msg, ex) => {
 /** Converteix un valor en l'entrada en brut que escriuria l'alumna. */
 function toRaw(type, v) {
   if (type === 'power') return { base: String(v.base), exp: String(v.exp) };
+  if (type === 'fraction') return { num: String(v.num), den: String(v.den) };
   return String(v);
 }
 
 const bad = /NaN|undefined|null|\[object/;
+const gcdT = (a, b) => (b ? gcdT(b, a % b) : Math.abs(a));
 
 for (const topic of ML.topics.available()) {
   const errorIds = new Set([...Object.keys(topic.errors), ...Object.keys(C.coreErrors)]);
@@ -90,6 +97,8 @@ for (const topic of ML.topics.available()) {
         if (type === 'number' && (!Number.isInteger(ex.answer) || (ex.answer < 0 && !ex.input.signed))) fail(`${where}: resposta no entera (o negativa sense input.signed)`, ex);
         if (Object.is(ex.answer, -0)) fail(`${where}: resposta −0`, ex);
         if (type === 'power' && (!Number.isInteger(ex.answer.exp) || ex.answer.exp < 0)) fail(`${where}: exponent no natural`, ex);
+        if (type === 'fraction' && (!Number.isInteger(ex.answer.num) || !Number.isInteger(ex.answer.den) || ex.answer.den <= 0 || ex.answer.num < 0)) fail(`${where}: fracció no vàlida`, ex);
+        if (type === 'fraction' && !ex.input.anyForm && gcdT(ex.answer.num, ex.answer.den) !== 1) fail(`${where}: la resposta (sense anyForm) no és irreductible`, ex);
 
         if (type === 'choice') {
           const labels = ex.input.options.map((o) => o.label);
@@ -124,6 +133,12 @@ const r4 = C.evaluate({ input: { type: 'number', signed: true }, answer: -5, tra
 if (!r4.correct) fail('"−5" (signe menys tipogràfic) hauria de valer −5');
 const r5 = C.evaluate({ input: { type: 'number', signed: true }, answer: 5, traps: [] }, '+5');
 if (!r5.correct) fail('"+5" hauria de valer 5');
+const fx = { input: { type: 'fraction' }, answer: { num: 3, den: 4 }, traps: [] };
+const r6 = C.evaluate(fx, { num: '6', den: '8' });
+if (r6.correct || r6.trap.id !== 'fraccio_no_irreductible') fail('6/8 per 3/4 hauria de ser fraccio_no_irreductible');
+const r7 = C.evaluate(Object.assign({}, fx, { input: { type: 'fraction', anyForm: true } }), { num: '6', den: '8' });
+if (!r7.correct) fail('Amb anyForm, 6/8 hauria de valer per 3/4');
+if (C.evaluate(fx, { num: '3', den: '0' }).valid) fail('Un denominador 0 no hauria de ser vàlid');
 
 if (failures) {
   console.error(`\n${failures} errors`);

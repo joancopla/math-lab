@@ -1,8 +1,10 @@
 /* Correcció de respostes i detecció d'errors típics.
  *
  * Un exercici declara:
- *   input:  { type: 'number' } | { type: 'power' } | { type: 'choice', options: [{ value, label }] }
- *   answer: nombre | { base, exp } | valor de l'opció correcta
+ *   input:  { type: 'number', signed? } | { type: 'power' } | { type: 'fraction', anyForm? } | { type: 'choice', options: [{ value, label }] }
+ *   answer: nombre | { base, exp } | { num, den } | valor de l'opció correcta
+ *   Amb 'fraction' la resposta ha de ser exactament aquesta fracció (normalment, la irreductible);
+ *   amb anyForm: true, també es dona per bona qualsevol fracció equivalent.
  *   traps:  [{ match?: valor, test?: (valor) => bool, id: 'idError', msg: 'html' }]
  *
  * Si la resposta és incorrecta, es busca el primer "parany" (trap) que hi encaixa:
@@ -19,7 +21,12 @@
     forma_equivalent: { title: 'Valor correcte, forma incorrecta', explain: 'El valor és bo, però la resposta no té la forma que es demana (per exemple, una altra base).' },
     base_canviada: { title: 'Canviar la base', explain: 'En operar potències de la mateixa base, la base no canvia: només operem amb els exponents.' },
     exponent_incorrecte: { title: 'Exponent incorrecte', explain: 'La base és correcta, però l\'exponent no. Revisa quina operació cal fer amb els exponents.' },
+    fraccio_no_irreductible: { title: 'Fracció sense simplificar', explain: 'El valor és bo, però cal donar la fracció irreductible: divideix el numerador i el denominador pel seu mcd.' },
   };
+
+  const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
+  /** Dues fraccions tenen el mateix valor? */
+  C.sameValue = (a, b) => a.num * b.den === b.num * a.den;
 
   /** Converteix l'entrada en brut en un valor comparable, o null si no és vàlida. */
   C.parse = (input, raw) => {
@@ -36,6 +43,14 @@
         const bn = U.parseNumber(b);
         return { base: Number.isNaN(bn) ? b : bn, exp: e };
       }
+      case 'fraction': {
+        if (!raw) return null;
+        const n = U.parseNumber(raw.num);
+        const d = U.parseNumber(raw.den);
+        if (!Number.isInteger(n) || !Number.isInteger(d) || d === 0) return null;
+        // El signe sempre al numerador; i res de −0.
+        return d < 0 ? { num: -n || 0, den: -d } : { num: n || 0, den: d };
+      }
       case 'choice':
         return raw == null || raw === '' ? null : String(raw);
       default:
@@ -47,6 +62,7 @@
   C.key = (type, v) => {
     if (v == null) return '';
     if (type === 'power') return `${v.base}^${v.exp}`;
+    if (type === 'fraction') return `${v.num}/${v.den}`;
     return String(v);
   };
 
@@ -57,7 +73,8 @@
 
     const key = C.key(type, value);
     const answerKey = C.key(type, ex.answer);
-    if (key === answerKey || (ex.accept && ex.accept(value))) return { valid: true, correct: true, value };
+    const anyForm = type === 'fraction' && ex.input.anyForm && C.sameValue(value, ex.answer);
+    if (key === answerKey || anyForm || (ex.accept && ex.accept(value))) return { valid: true, correct: true, value };
 
     let trap = (ex.traps || []).find((t) => {
       if (t.match !== undefined) {
@@ -67,6 +84,7 @@
       return typeof t.test === 'function' && t.test(value);
     });
     if (!trap && type === 'power') trap = C.powerFallback(ex, value);
+    if (!trap && type === 'fraction') trap = C.fractionFallback(ex, value);
     if (!trap) {
       trap = {
         id: 'altre',
@@ -99,6 +117,18 @@
       };
     }
     return null;
+  };
+
+  /** Diagnòstic genèric per a fraccions: el valor és bo però no és la irreductible. */
+  C.fractionFallback = (ex, v) => {
+    if (!C.sameValue(v, ex.answer)) return null;
+    const g = gcd(v.num, v.den);
+    return {
+      id: 'fraccio_no_irreductible',
+      msg: g > 1
+        ? `El valor és correcte, però encara es pot simplificar: divideix el numerador i el denominador per ${g}. Et demanem la fracció <b>irreductible</b>.`
+        : 'El valor és correcte, però et demanem la fracció d\'una altra manera. Llegeix bé l\'enunciat.',
+    };
   };
 
   ML.checker = C;

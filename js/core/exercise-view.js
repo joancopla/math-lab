@@ -36,6 +36,14 @@
                 <span class="ans-field is-exp"><input class="ans-exp" type="text" inputmode="numeric" autocomplete="off" aria-label="Exponent" placeholder="n"><span class="ans-badge">Exponent</span></span>
               </span>`;
     }
+    if (t === 'fraction') {
+      return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva fracció:</span>
+              <span class="ans-frac">
+                <input class="ans-num" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-label="Numerador (el de dalt)" placeholder="?">
+                <span class="ans-frac-bar" aria-hidden="true"></span>
+                <input class="ans-den" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-label="Denominador (el de baix)" placeholder="?">
+              </span>`;
+    }
     if (t === 'choice') {
       return `<div class="choices">${ex.input.options
         .map((o) => `<button type="button" class="choice" data-value="${U.esc(o.value)}">${o.label}</button>`)
@@ -87,6 +95,20 @@
       });
     }
 
+    // Fracció: "/" al numerador salta al denominador.
+    if (type === 'fraction') {
+      const [num, den] = inputs;
+      num.addEventListener('keydown', (e) => {
+        if (e.key === '/' || (e.key === 'Enter' && num.value.trim() && !den.value.trim())) {
+          e.preventDefault();
+          den.focus();
+        }
+      });
+      den.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && den.value === '') num.focus();
+      });
+    }
+
     const signBtn = form.querySelector('.js-sign');
     if (signBtn) {
       signBtn.addEventListener('click', () => {
@@ -125,6 +147,7 @@
     function readRaw() {
       if (type === 'number') return inputs[0].value;
       if (type === 'power') return { base: inputs[0].value, exp: inputs[1].value };
+      if (type === 'fraction') return { num: inputs[0].value, den: inputs[1].value };
       return choiceValue;
     }
 
@@ -139,6 +162,12 @@
         if (inputs[0].value.trim() === '') return 'Falta la base: és el nombre gran de baix.';
         if (inputs[1].value.trim() === '') return "Falta l'exponent: és el nombre petit de dalt.";
         return "L'exponent s'ha d'escriure amb xifres.";
+      }
+      if (type === 'fraction') {
+        if (inputs[0].value.trim() === '') return 'Falta el numerador: és el nombre de dalt.';
+        if (inputs[1].value.trim() === '') return 'Falta el denominador: és el nombre de baix.';
+        if (U.parseNumber(inputs[1].value) === 0) return 'El denominador no pot ser 0.';
+        return 'Escriu el numerador i el denominador només amb xifres.';
       }
       return 'Tria una de les opcions.';
     }
