@@ -4,6 +4,5 @@
   'use strict';
 
   [
-    { id: 'decimals', title: 'Nombres decimals', icon: '0,5', color: '#3a7bd5', description: 'Ordenar, arrodonir i operar amb decimals.' },
   ].forEach((t) => ML.topics.register(Object.assign({ comingSoon: true }, t)));
 })(window.MathLab);

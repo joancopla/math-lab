@@ -24,6 +24,12 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   sumar el mateix a dalt i a baix, dividir sense invertir, «1/4 del que queda» calculat sobre el total…
   La resposta es pot escriure com a fracció (numerador i denominador); si el valor és bo però no és irreductible,
   l'app ho diu. Dues visualitzacions: barres de fraccions (equivalents i comparar) i sumar amb barres, pas a pas.
+- **Nombres decimals** (cinquè mòdul), amb 7 apartats × 3 nivells:
+  què és un decimal · ordenar i comparar · arrodonir · sumar i restar · multiplicar · dividir · problemes.
+  Errors típics: «0,45 > 0,5», «5 centèsimes = 0,5», tallar en lloc d'arrodonir, no alinear la coma,
+  «5 − 2,3 = 3,3», «2,5 · 10 = 2,50», «0,3 · 0,2 = 0,6», oblidar la coma del quocient… La resposta s'accepta amb coma
+  o amb punt («3,25» o «3.25»). Dues visualitzacions: la quadrícula de centèsimes i la taula de valor de posició
+  (multiplicar i dividir per 10, 100 i 1.000).
 - Exercicis **generats aleatòriament**. Quan la resposta és incorrecta, es **detecta l'error típic** (p. ex. «2³ = 6»,
   «a³ · a⁴ = a¹²», «a⁰ = 0», «√36 = 18») i se n'explica el motiu, amb solució pas a pas.
 - En pràctica es pot reintentar i demanar pistes. Es practica en **rondes de 10 exercicis** que acaben amb un resum
@@ -60,6 +66,7 @@ js/topics/
   divisibilitat/            errors, exercicis, visual.js (rectangles), garbell.js, descomposicio.js, index.js
   enters/                   errors, exercicis, recta.js (recta numèrica), fitxes.js, index.js
   fraccions/                errors, exercicis, barres.js, suma.js (sumar amb barres), index.js
+  decimals/                 errors, exercicis, quadricula.js, coma.js (per 10, 100 i 1.000), index.js
   properament.js            temes «Aviat» que surten a l'inici
 js/views/                   pantalles: inici, tema, pràctica, visualització, repte, progrés
 js/app.js                   router per hash (#/tema/potencies/…)
@@ -68,22 +75,22 @@ tests/generators.test.js    prova de robustesa dels generadors
 
 Són scripts clàssics (no mòduls ES) a propòsit: així l'app funciona obrint el fitxer directament, sense servidor.
 
-## Com afegir un tema nou (p. ex. decimals)
+## Com afegir un tema nou (p. ex. proporcionalitat)
 
-1. Crea `js/topics/decimals/` amb `errors.js`, `exercises.js` i `index.js` (copia l'estructura de `potencies` o `divisibilitat`).
+1. Crea `js/topics/proporcionalitat/` amb `errors.js`, `exercises.js` i `index.js` (copia l'estructura de `potencies` o `divisibilitat`).
 2. A `index.js`, registra'l:
 
    ```js
    MathLab.topics.register({
-     id: 'decimals', title: 'Nombres decimals', icon: '0,5', color: '#3a7bd5',
+     id: 'proporcionalitat', title: 'Proporcionalitat', icon: '%', color: '#8a5cd6',
      description: '…',
-     errors: { coma_mal_posada: { title: '…', explain: '…' } },
-     skills: [{ id: 'ordenar', title: 'Ordenar decimals', summary: '…', theory: '<p>…</p>',
+     errors: { regla_de_tres_girada: { title: '…', explain: '…' } },
+     skills: [{ id: 'percentatges', title: 'Percentatges', summary: '…', theory: '<p>…</p>',
                 levels: ['…', '…', '…'], generate: (level) => ({ /* exercici */ }) }],
      visuals: [],   // opcional: [{ id, title, description, mount(container) → cleanup }]
    });
    ```
-3. Treu-lo de `js/topics/properament.js` i afegeix els scripts a `index.html` i a `tests/generators.test.js`.
+3. Si el tema era a `js/topics/properament.js`, treu-lo d'allà. Afegeix els scripts a `index.html` i a `tests/generators.test.js`.
 
 El mode repte, la pàgina de progrés i les estrelles funcionen automàticament per a qualsevol tema registrat. Opcionalment, `pathTitle` dona el títol del camí a l'inici («El camí de la divisibilitat»).
 

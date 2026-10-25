@@ -22,12 +22,12 @@ window.MathLab = window.MathLab || {};
     return a;
   };
 
-  /** Format de nombres en català: punt de milers a partir de 5 xifres. */
+  /** Format de nombres en català: coma decimal i punt de milers a partir de 5 xifres a la part entera. */
   U.fmt = (n) => {
     if (typeof n !== 'number') return String(n);
-    const s = String(Math.abs(n));
-    const grouped = s.length > 4 ? s.replace(/\B(?=(\d{3})+(?!\d))/g, '.') : s;
-    return (n < 0 ? '−' : '') + grouped;
+    const [ip, dp] = String(Math.abs(n)).split('.');
+    const grouped = ip.length > 4 ? ip.replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ip;
+    return (n < 0 ? '−' : '') + grouped + (dp ? `,${dp}` : '');
   };
 
   /** Converteix el text que escriu l'alumna en un nombre (o NaN). Accepta "1.000", "1 000", "−3", "+5". */

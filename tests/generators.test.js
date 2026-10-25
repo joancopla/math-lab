@@ -49,6 +49,11 @@ const root = path.join(__dirname, '..');
   'js/topics/fraccions/barres.js',
   'js/topics/fraccions/suma.js',
   'js/topics/fraccions/index.js',
+  'js/topics/decimals/errors.js',
+  'js/topics/decimals/exercises.js',
+  'js/topics/decimals/quadricula.js',
+  'js/topics/decimals/coma.js',
+  'js/topics/decimals/index.js',
   'js/topics/properament.js',
 ].forEach((f) => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f }));
 
@@ -94,7 +99,13 @@ for (const topic of ML.topics.available()) {
         const ok = C.evaluate(ex, toRaw(type, ex.answer));
         if (!ok.valid || !ok.correct) fail(`${where}: la resposta correcta no es valida`, ex);
 
-        if (type === 'number' && (!Number.isInteger(ex.answer) || (ex.answer < 0 && !ex.input.signed))) fail(`${where}: resposta no entera (o negativa sense input.signed)`, ex);
+        if (type === 'number' && !ex.input.decimal && (!Number.isInteger(ex.answer) || (ex.answer < 0 && !ex.input.signed))) fail(`${where}: resposta no entera (o negativa sense input.signed)`, ex);
+        if (type === 'number' && ex.input.decimal) {
+          // Com a molt 4 decimals, i que escrita amb coma (com ho faria l'alumna) es validi.
+          const x = ex.answer * 1e4;
+          if (!Number.isFinite(ex.answer) || Math.abs(x - Math.round(x)) > 1e-6 || (ex.answer < 0 && !ex.input.signed)) fail(`${where}: decimal no vàlid`, ex);
+          if (!C.evaluate(ex, ML.utils.fmt(ex.answer)).correct) fail(`${where}: la resposta escrita amb coma no es valida`, ex);
+        }
         if (Object.is(ex.answer, -0)) fail(`${where}: resposta −0`, ex);
         if (type === 'power' && (!Number.isInteger(ex.answer.exp) || ex.answer.exp < 0)) fail(`${where}: exponent no natural`, ex);
         if (type === 'fraction' && (!Number.isInteger(ex.answer.num) || !Number.isInteger(ex.answer.den) || ex.answer.den <= 0 || ex.answer.num < 0)) fail(`${where}: fracció no vàlida`, ex);
@@ -139,6 +150,9 @@ if (r6.correct || r6.trap.id !== 'fraccio_no_irreductible') fail('6/8 per 3/4 ha
 const r7 = C.evaluate(Object.assign({}, fx, { input: { type: 'fraction', anyForm: true } }), { num: '6', den: '8' });
 if (!r7.correct) fail('Amb anyForm, 6/8 hauria de valer per 3/4');
 if (C.evaluate(fx, { num: '3', den: '0' }).valid) fail('Un denominador 0 no hauria de ser vàlid');
+const dx = { input: { type: 'number', decimal: true }, answer: 2.125, traps: [] };
+if (!C.evaluate(dx, '2,125').correct || !C.evaluate(dx, '2.125').correct) fail('Amb decimals, "2,125" i "2.125" haurien de valer 2,125');
+if (ML.utils.fmt(1234.5) !== '1234,5' || ML.utils.fmt(12345.25) !== '12.345,25' || ML.utils.fmt(-0.75) !== '−0,75') fail('fmt de decimals incorrecte');
 
 if (failures) {
   console.error(`\n${failures} errors`);

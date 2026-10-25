@@ -32,7 +32,9 @@
   C.parse = (input, raw) => {
     switch (input.type) {
       case 'number': {
-        const n = U.parseNumber(raw);
+        // Amb decimals, el punt també és la coma decimal: «3.25» = 3,25 (no 325).
+        const s = input.decimal && typeof raw === 'string' && !raw.includes(',') ? raw.replace(/\./g, ',') : raw;
+        const n = U.parseNumber(s);
         return Number.isNaN(n) ? null : n;
       }
       case 'power': {

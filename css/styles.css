@@ -886,6 +886,28 @@ input:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
 .fb-cell.on { background: var(--blue); }
 .fb-cell.on2 { background: var(--purple); }
 .js-second[hidden] { display: none; }
+
+/* ── Decimals: quadrícula i taula de valor de posició ────── */
+.dq-two { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }
+.dq-fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.dq-fig figcaption { font: 700 1.3rem var(--display); color: var(--indigo-700); }
+.dq-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: min(220px, 70vw); aspect-ratio: 1; padding: 3px; border: 3px solid var(--indigo-700); border-radius: 8px; background: var(--white); }
+.dq-cell { background: var(--slate-100); border-radius: 2px; }
+.dq-cell.on { background: var(--blue-400); }
+.dq-cell.on.is-row { background: var(--blue); }
+.dq-cell.on2 { background: var(--purple-300); }
+.dq-cell.on2.is-row { background: var(--purple); }
+.dq-sym { font: 700 2.4rem var(--display); color: var(--ink-2); }
+.dc-stage { overflow-x: auto; }
+.dc-table { position: relative; width: calc(var(--w) * 7 + 14px); margin: 0 auto; }
+.dc-head { display: flex; gap: 0; }
+.dc-head span { width: var(--w); text-align: center; font: 700 .9rem var(--display); color: var(--ink-3); }
+.dc-head span:nth-child(5) { margin-left: 14px; }
+.dc-body { position: relative; height: 64px; margin-top: 6px; border-radius: 12px; background: var(--white); border: 2px solid var(--slate-200); }
+.dc-d { position: absolute; top: 8px; width: var(--w); text-align: center; font: 700 2.2rem var(--display); color: var(--indigo-700); }
+.dc-d.is-zero { color: var(--slate-300); }
+.dc-comma { position: absolute; top: 4px; font: 700 2.4rem var(--display); color: var(--red); }
+.dc-ops .btn:disabled { opacity: .4; }
 @media (max-width: 560px) {
   .seg button { padding: 6px 8px; font-size: .82rem; }
   .slider { width: 100%; }
