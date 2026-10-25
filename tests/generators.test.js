@@ -39,6 +39,11 @@ const root = path.join(__dirname, '..');
   'js/topics/divisibilitat/garbell.js',
   'js/topics/divisibilitat/descomposicio.js',
   'js/topics/divisibilitat/index.js',
+  'js/topics/enters/errors.js',
+  'js/topics/enters/exercises.js',
+  'js/topics/enters/recta.js',
+  'js/topics/enters/fitxes.js',
+  'js/topics/enters/index.js',
   'js/topics/properament.js',
 ].forEach((f) => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f }));
 
@@ -82,7 +87,8 @@ for (const topic of ML.topics.available()) {
         const ok = C.evaluate(ex, toRaw(type, ex.answer));
         if (!ok.valid || !ok.correct) fail(`${where}: la resposta correcta no es valida`, ex);
 
-        if (type === 'number' && (!Number.isInteger(ex.answer) || ex.answer < 0)) fail(`${where}: resposta no natural`, ex);
+        if (type === 'number' && (!Number.isInteger(ex.answer) || (ex.answer < 0 && !ex.input.signed))) fail(`${where}: resposta no entera (o negativa sense input.signed)`, ex);
+        if (Object.is(ex.answer, -0)) fail(`${where}: resposta −0`, ex);
         if (type === 'power' && (!Number.isInteger(ex.answer.exp) || ex.answer.exp < 0)) fail(`${where}: exponent no natural`, ex);
 
         if (type === 'choice') {
@@ -114,6 +120,10 @@ const r2 = C.evaluate({ input: { type: 'number' }, answer: 100000, traps: [] }, 
 if (!r2.correct) fail('"100.000" hauria de valer 100000');
 const r3 = C.evaluate({ input: { type: 'power' }, answer: { base: 'x', exp: 5 }, traps: [] }, { base: 'X', exp: '5' });
 if (!r3.correct) fail('La base en majúscula hauria de valer');
+const r4 = C.evaluate({ input: { type: 'number', signed: true }, answer: -5, traps: [] }, '−5');
+if (!r4.correct) fail('"−5" (signe menys tipogràfic) hauria de valer −5');
+const r5 = C.evaluate({ input: { type: 'number', signed: true }, answer: 5, traps: [] }, '+5');
+if (!r5.correct) fail('"+5" hauria de valer 5');
 
 if (failures) {
   console.error(`\n${failures} errors`);

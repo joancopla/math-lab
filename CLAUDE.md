@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Math Lab 1r ESO: a static, backend-free math practice web app in **Catalan** for a 12-year-old student (1r d'ESO). All user-facing text, code comments and the README are in Catalan; keep it that way. Two topics are built, *potències* and *divisibilitat*; more topics (enters, fraccions, decimals) are planned as placeholders.
+Math Lab 1r ESO: a static, backend-free math practice web app in **Catalan** for a 12-year-old student (1r d'ESO). All user-facing text, code comments and the README are in Catalan; keep it that way. Three topics are built, *potències*, *divisibilitat* and *enters*; more topics (fraccions, decimals) are planned as placeholders.
 
 ## Commands
 
@@ -18,7 +18,7 @@ Math Lab 1r ESO: a static, backend-free math practice web app in **Catalan** for
 
 **Core (`js/core/`)**, shared by all topics:
 - `registry.js`: `ML.topics.register(def)`. A topic def has `id, title, icon, color, description, errors, skills[], visuals[]` (or `comingSoon: true`), plus an optional `pathTitle` for the home path heading. Each skill has `generate(level)` for levels 1–3.
-- `checker.js`: the central idea. An exercise declares `input.type` (`number` | `power` | `choice`), `answer` and `traps`. A trap is a predictable wrong answer: `{match | test, id, msg}`. `evaluate()` compares values by normalized keys (`power` is `"base^exp"`, and the base may be a letter). It ignores any trap whose match equals the answer, and otherwise returns the first matching trap. That's how the app knows *which* typical mistake the student made. For `power` answers there's a generic fallback (`forma_equivalent`, `base_canviada`, `exponent_incorrecte`); anything else falls back to `altre`. An exercise can also have `accept(value)` when several answers are right (e.g. a missing digit), and a `fallback` message instead of the generic one.
+- `checker.js`: the central idea. An exercise declares `input.type` (`number` | `power` | `choice`), `answer` and `traps`. A trap is a predictable wrong answer: `{match | test, id, msg}`. `evaluate()` compares values by normalized keys (`power` is `"base^exp"`, and the base may be a letter). It ignores any trap whose match equals the answer, and otherwise returns the first matching trap. That's how the app knows *which* typical mistake the student made. For `power` answers there's a generic fallback (`forma_equivalent`, `base_canviada`, `exponent_incorrecte`); anything else falls back to `altre`. For negative answers use `input: { type: 'number', signed: true }`: it adds a +/− button (mobile numeric keypads often lack the minus sign), and the test rejects negative answers without it. An exercise can also have `accept(value)` when several answers are right (e.g. a missing digit), and a `fallback` message instead of the generic one.
 - `exercise-view.js`: `ML.mountExercise(container, ex, {topic, mode, onFirstAnswer, onNext})` renders any exercise. `practice` mode allows retries and hints; `challenge` mode gives a single attempt. `onFirstAnswer` fires after the feedback is rendered, so callers can tweak it.
 - `storage.js`: the only code that touches `localStorage` (key `mathlab-1reso.v1`). It tracks per skill/level stats (`run`/`bestRun`; a star needs `STAR_RUN` = 5 correct answers in a row), per-error counts keyed `"topic:errorId"`, the daily streak, challenge records and points.
 

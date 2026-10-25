@@ -12,6 +12,12 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   problemes de mcd i mcm. Errors típics detectats: confondre múltiple i divisor, «1 és primer», «tots els senars són
   primers», mirar l'última xifra per al 3, factors no primers a la descomposició, mcm = producte, mcd ↔ mcm…
   Tres visualitzacions: divisors amb rectangles, el garbell d'Eratòstenes i la descomposició pas a pas (taula de divisions).
+- **Nombres enters** (tercer mòdul), amb 7 apartats × 3 nivells:
+  què és un enter (valor absolut i oposat) · ordenar i comparar · sumar i restar · multiplicar i dividir ·
+  operacions combinades · potències d'enters · problemes. Errors típics: «−8 > −3», «(−3) + (−5) = 8»,
+  «5 − (−3) = 2», «(−2)⁴ = −16», «−2⁴ = 16», oblidar el signe menys… Les respostes poden ser negatives: el camp
+  té un botó +/− perquè el teclat numèric del mòbil sovint no té el signe menys.
+  Dues visualitzacions: la recta numèrica (sumar i restar com a desplaçaments) i sumar amb fitxes (+ i − s'anul·len).
 - Exercicis **generats aleatòriament**. Quan la resposta és incorrecta, es **detecta l'error típic** (p. ex. «2³ = 6»,
   «a³ · a⁴ = a¹²», «a⁰ = 0», «√36 = 18») i se n'explica el motiu, amb solució pas a pas.
 - En pràctica es pot reintentar i demanar pistes. Es practica en **rondes de 10 exercicis** que acaben amb un resum
@@ -46,6 +52,7 @@ js/topics/
     pas-a-pas.js            producte i quocient, pas a pas (accepta un apartat: mount(c, { tema }))
     index.js                registra el tema
   divisibilitat/            errors, exercicis, visual.js (rectangles), garbell.js, descomposicio.js, index.js
+  enters/                   errors, exercicis, recta.js (recta numèrica), fitxes.js, index.js
   properament.js            temes «Aviat» que surten a l'inici
 js/views/                   pantalles: inici, tema, pràctica, visualització, repte, progrés
 js/app.js                   router per hash (#/tema/potencies/…)
@@ -54,17 +61,17 @@ tests/generators.test.js    prova de robustesa dels generadors
 
 Són scripts clàssics (no mòduls ES) a propòsit: així l'app funciona obrint el fitxer directament, sense servidor.
 
-## Com afegir un tema nou (p. ex. enters)
+## Com afegir un tema nou (p. ex. fraccions)
 
-1. Crea `js/topics/enters/` amb `errors.js`, `exercises.js` i `index.js` (copia l'estructura de `potencies` o `divisibilitat`).
+1. Crea `js/topics/fraccions/` amb `errors.js`, `exercises.js` i `index.js` (copia l'estructura de `potencies` o `divisibilitat`).
 2. A `index.js`, registra'l:
 
    ```js
    MathLab.topics.register({
-     id: 'enters', title: 'Nombres enters', icon: '±', color: '#2a9d8f',
+     id: 'fraccions', title: 'Fraccions', icon: '½', color: '#d6457a',
      description: '…',
-     errors: { signe_oblidat: { title: '…', explain: '…' } },
-     skills: [{ id: 'suma', title: 'Sumar enters', summary: '…', theory: '<p>…</p>',
+     errors: { suma_numeradors_i_denominadors: { title: '…', explain: '…' } },
+     skills: [{ id: 'equivalents', title: 'Fraccions equivalents', summary: '…', theory: '<p>…</p>',
                 levels: ['…', '…', '…'], generate: (level) => ({ /* exercici */ }) }],
      visuals: [],   // opcional: [{ id, title, description, mount(container) → cleanup }]
    });

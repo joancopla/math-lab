@@ -21,9 +21,13 @@
   function inputMarkup(ex) {
     const t = ex.input.type;
     if (t === 'number') {
-      return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva resposta:</span>
-              <input class="ans-number" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"
+      const field = `<input class="ans-number" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"
                 aria-label="La teva resposta" placeholder="?">`;
+      // Amb enters, un botó per canviar el signe: el teclat numèric del mòbil sovint no té el «−».
+      return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva resposta:</span>
+              ${ex.input.signed
+                ? `<span class="ans-signed"><button type="button" class="btn-sign js-sign" aria-label="Canvia el signe (positiu o negatiu)">+/−</button>${field}</span>`
+                : field}`;
     }
     if (t === 'power') {
       return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva potència:</span>
@@ -83,6 +87,16 @@
       });
     }
 
+    const signBtn = form.querySelector('.js-sign');
+    if (signBtn) {
+      signBtn.addEventListener('click', () => {
+        const inp = inputs[0];
+        const v = inp.value.trim();
+        inp.value = /^[-−–]/.test(v) ? v.replace(/^[-−–]\s*/, '') : `−${v.replace(/^\+/, '')}`;
+        inp.focus();
+      });
+    }
+
     if (type === 'choice') {
       form.querySelectorAll('.choice').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -119,7 +133,7 @@
       if (type === 'number') {
         return inputs[0].value.trim() === ''
           ? 'Escriu la teva resposta abans de comprovar.'
-          : 'Escriu la resposta només amb xifres (per exemple, 125).';
+          : `Escriu la resposta només amb xifres (per exemple, ${ex.input.signed ? '−12' : '125'}).`;
       }
       if (type === 'power') {
         if (inputs[0].value.trim() === '') return 'Falta la base: és el nombre gran de baix.';
@@ -131,6 +145,7 @@
 
     function setLocked(locked) {
       inputs.forEach((i) => (i.disabled = locked));
+      if (signBtn) signBtn.disabled = locked;
       const sub = form.querySelector('[type="submit"]');
       if (sub) sub.disabled = locked;
     }

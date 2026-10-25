@@ -30,9 +30,9 @@ window.MathLab = window.MathLab || {};
     return (n < 0 ? '−' : '') + grouped;
   };
 
-  /** Converteix el text que escriu l'alumna en un nombre (o NaN). Accepta "1.000", "1 000", "−3". */
+  /** Converteix el text que escriu l'alumna en un nombre (o NaN). Accepta "1.000", "1 000", "−3", "+5". */
   U.parseNumber = (str) => {
-    let s = String(str == null ? '' : str).trim().replace(/\s+/g, '').replace(/[−–]/g, '-');
+    let s = String(str == null ? '' : str).trim().replace(/\s+/g, '').replace(/[−–]/g, '-').replace(/^\+/, '');
     if (s === '') return NaN;
     if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
     s = s.replace(',', '.');
