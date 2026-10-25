@@ -21,8 +21,10 @@
   function inputMarkup(ex) {
     const t = ex.input.type;
     if (t === 'number') {
-      const field = `<input class="ans-number" type="text" inputmode="${ex.input.decimal ? 'decimal' : 'numeric'}" autocomplete="off" spellcheck="false"
-                aria-label="La teva resposta" placeholder="?">`;
+      const input = `<input class="ans-number" type="text" inputmode="${ex.input.decimal ? 'decimal' : 'numeric'}" autocomplete="off" spellcheck="false"
+                aria-label="La teva resposta${ex.input.unit ? ` (en ${ex.input.unit})` : ''}" placeholder="?">`;
+      // Amb input.unit, la unitat de la resposta (m, kg, min…) es mostra al costat de la casella.
+      const field = ex.input.unit ? `<span class="ans-with-unit">${input}<span class="ans-unit" aria-hidden="true">${ex.input.unit}</span></span>` : input;
       // Amb enters, un botó per canviar el signe: el teclat numèric del mòbil sovint no té el «−».
       return `<span class="ans-label"><span aria-hidden="true" class="ico">edit_note</span>La teva resposta:</span>
               ${ex.input.signed

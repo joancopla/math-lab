@@ -35,7 +35,7 @@
         const o = ex.input.options.find((x) => x.value === String(v));
         return o ? o.label : '';
       }
-      default: return U.fmt(v);
+      default: return U.fmt(v) + (ex.input.unit ? ` ${ex.input.unit}` : '');
     }
   }
 
@@ -78,7 +78,9 @@
   }
 
   ML.views.exam = (root, topicId) => {
-    const topic = topicId ? ML.topics.get(topicId) : null;
+    // Si el curs només té un tema (com 6è), l'examen barrejat és el d'aquest tema.
+    const solo = ML.topics.available().length === 1 ? ML.topics.available()[0] : null;
+    const topic = topicId ? ML.topics.get(topicId) : solo;
     if (topicId && (!topic || topic.comingSoon)) return ML.views.notFound(root);
     const title = topic ? `Examen de ${topic.title.toLowerCase()}` : 'Examen sorpresa';
     const crumbs = () => ML.ui.crumbs(topic ? [['Inici', '#/'], [topic.title, `#/tema/${topic.id}`], ['Examen']] : [['Inici', '#/'], ['Examen sorpresa']]);
@@ -86,7 +88,7 @@
     let i;
 
     function intro() {
-      const past = (ML.storage.get().exams || []).filter((x) => (x.topic || null) === (topic ? topic.id : null));
+      const past = ML.storage.exams(topic ? topic.id : null);
       const last = past[past.length - 1];
       const best = past.reduce((m, x) => Math.max(m, x.ok / x.n), 0);
       root.innerHTML = `
@@ -106,14 +108,14 @@
           </ul>
           ${last ? `<p class="record">Últim examen: <b>${U.fmt(Math.round((last.ok / last.n) * 100) / 10)}</b> · Millor nota: <b>${U.fmt(Math.round(best * 100) / 10)}</b></p>` : ''}
           <button class="btn btn-3d btn-blue btn-xl js-start">Comença l'examen</button>
-          <div class="exam-other">
+          ${solo ? '' : `<div class="exam-other">
             <p class="muted">${topic ? 'O bé:' : 'O fes l\'examen d\'un sol tema:'}</p>
             <div class="exam-topics">
               ${topic ? '<a class="btn btn-small" href="#/examen">📝 Examen barrejat de tots els temes</a>' : ''}
               ${ML.topics.available().filter((t) => !topic || t.id !== topic.id).map((t) => `
                 <a class="btn btn-small" href="#/examen/${t.id}"><span class="exam-topic-icon" style="--topic:${t.color}">${t.icon}</span>${t.title}</a>`).join('')}
             </div>
-          </div>
+          </div>`}
         </section>`;
       root.querySelector('.js-start').addEventListener('click', start);
       root.querySelector('.js-start').focus();

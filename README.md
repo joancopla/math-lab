@@ -1,10 +1,12 @@
 # Math Lab 1r ESO
 
-Web app de matemàtiques per a 1r d'ESO, en català, sense backend ni dependències.
+Web app de matemàtiques per a 1r d'ESO (i un tema de 6è de primària), en català, sense backend ni dependències.
 Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es desa al `localStorage` del navegador.
 
 ## Què hi ha
 
+- **Selector de curs** a dalt de tot: **1r ESO** (per defecte) o **6è**. Només es mostren els temes del curs triat
+  (inici, menú, estrelles, progrés i exàmens). El curs es desa; un enllaç a un tema de l'altre curs hi canvia sol.
 - **Potències** (primer mòdul), amb 7 apartats × 3 nivells:
   notació · càlcul · producte · quocient · potència d'una potència · exponents 0 i 1 · quadrats i cubs perfectes.
 - **Divisibilitat** (segon mòdul), amb 7 apartats × 3 nivells:
@@ -30,6 +32,13 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   «5 − 2,3 = 3,3», «2,5 · 10 = 2,50», «0,3 · 0,2 = 0,6», oblidar la coma del quocient… La resposta s'accepta amb coma
   o amb punt («3,25» o «3.25»). Dues visualitzacions: la quadrícula de centèsimes i la taula de valor de posició
   (multiplicar i dividir per 10, 100 i 1.000).
+- **6è de primària · Mesura**, amb 7 apartats × 3 nivells:
+  longitud · massa i capacitat · unitats de superfície i volum (hectàrees, litres) · el temps · els angles (graus i minuts,
+  complementaris, triangles) · perímetres i àrees (fins al polígon regular i el cercle) · volums (cub, ortoedre, prisma,
+  cilindre). Errors típics: multiplicar en lloc de dividir, comptar malament els graons, «2 m 5 cm = 25 cm», ·10 a la
+  superfície, «1 h = 100 min», no passar 60 min a 1 h, complementari ↔ suplementari, oblidar el «: 2», radi ↔ diàmetre…
+  La unitat de la resposta es mostra al costat de la casella. Dues visualitzacions: l'escala de les unitats i d'on surten
+  les fórmules de les àrees (amb lliscadors sobre una quadrícula).
 - Exercicis **generats aleatòriament**. Quan la resposta és incorrecta, es **detecta l'error típic** (p. ex. «2³ = 6»,
   «a³ · a⁴ = a¹²», «a⁰ = 0», «√36 = 18») i se n'explica el motiu, amb solució pas a pas.
 - En pràctica es pot reintentar i demanar pistes. Es practica en **rondes de 10 exercicis** que acaben amb un resum
@@ -47,8 +56,6 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   s'han practicat i sense repetir enunciats d'exàmens anteriors. Sense pistes ni correcció fins al final; botó «No ho sé».
   En acabar: nota sobre 10 (Insuficient… Excel·lent) i repàs de cada pregunta amb l'error i la solució. Compta per a
   l'objectiu diari i els errors, però no per a les ratxes de les estrelles. Hi ha accés des de l'inici i des del progrés.
-  També hi ha l'**examen d'un sol tema** (`#/examen/:tema`, des de la pàgina de cada tema): 10 preguntes, com a mínim
-  una de cada apartat i en l'ordre del tema, i les que sobren dels apartats menys practicats.
   També hi ha l'**examen d'un sol tema** (`#/examen/:tema`, des de la pàgina de cada tema): 10 preguntes, com a mínim
   una de cada apartat i en l'ordre del tema, i les que sobren dels apartats menys practicats.
 - **Progrés**: ratxa de dies seguits, estrelles, encerts per nivell, rècords i errors que més es repeteixen.
@@ -75,6 +82,7 @@ js/topics/
   enters/                   errors, exercicis, recta.js (recta numèrica), fitxes.js, index.js
   fraccions/                errors, exercicis, barres.js, suma.js (sumar amb barres), index.js
   decimals/                 errors, exercicis, quadricula.js, coma.js (per 10, 100 i 1.000), index.js
+  mesura/                   (6è) errors, exercicis amb figures SVG, escala.js, figures.js, index.js
   properament.js            temes «Aviat» que surten a l'inici
 js/views/                   pantalles: inici, tema, pràctica, visualització, repte, progrés
 js/app.js                   router per hash (#/tema/potencies/…)
@@ -99,6 +107,8 @@ Són scripts clàssics (no mòduls ES) a propòsit: així l'app funciona obrint 
    });
    ```
 3. Si el tema era a `js/topics/properament.js`, treu-lo d'allà. Afegeix els scripts a `index.html` i a `tests/generators.test.js`.
+
+Per a un tema de 6è de primària, afegeix `course: '6e'` a la definició (per defecte és `'1eso'`; els cursos són a `js/core/registry.js`).
 
 El mode repte, la pàgina de progrés i les estrelles funcionen automàticament per a qualsevol tema registrat. Opcionalment, `pathTitle` dona el títol del camí a l'inici («El camí de la divisibilitat»).
 

@@ -81,6 +81,11 @@
   --green-800: #166534;
   --emerald-500: #10b981;
   --emerald-600: #059669;
+  --teal-50: #f0fdfa;
+  --teal-100: #ccfbf1;
+  --teal-300: #5eead4;
+  --teal-600: #0d9488;
+  --teal-700: #0f766e;
   --red-200: #fecaca;
   --red-300: #fca5a5;
   --red-400: #f87171;
@@ -1096,6 +1101,68 @@ input:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
 .toast.is-leaving { opacity: 0; transform: translateY(-8px); transition: opacity .3s, transform .3s; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-12px) scale(.95); } to { opacity: 1; transform: none; } }
 
+
+/* ── Selector de curs (1r ESO / 6è) ──────────────────────── */
+.topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.course-switch {
+  display: inline-flex; padding: 3px; border-radius: 14px; gap: 2px;
+  background: var(--slate-100); border: 2px solid var(--line);
+}
+.course-switch button {
+  border: 0; background: transparent; cursor: pointer; white-space: nowrap;
+  padding: 5px 12px; border-radius: 10px; min-height: 34px;
+  font-family: var(--body); font-size: .85rem; font-weight: 800; color: var(--ink-3);
+}
+.course-switch button:hover { color: var(--blue); }
+.course-switch button.is-on { background: var(--white); color: var(--blue); box-shadow: 0 2px 0 var(--indigo-200); }
+.course-switch button:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
+
+/* ── Unitat al costat de la resposta (m, kg, min…) ──────── */
+.ans-with-unit { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; }
+.ans-with-unit .ans-number { width: min(220px, 100%); min-width: 0; }
+.ans-unit { font-family: var(--display); font-weight: 700; font-size: 1.8rem; color: var(--ink-2); }
+
+/* ── Mesura: figures dels enunciats ─────────────────────── */
+.q-fig { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 16px; }
+.fig { width: 240px; max-width: 100%; height: auto; max-height: 150px; }
+.fig-data { font-family: var(--body); font-size: .95rem; font-weight: 700; color: var(--ink-2); max-width: 28ch; }
+.fig-shape { fill: var(--teal-100); stroke: var(--teal-700); stroke-width: 2.5; stroke-linejoin: round; }
+.fig-shape.is-top { fill: var(--teal-50); }
+.fig-shape.is-side { fill: var(--teal-300); }
+.fig-aux { stroke: var(--rose-700); stroke-width: 2; stroke-dasharray: 5 4; }
+.fig-solid { stroke: var(--rose-700); stroke-width: 2.5; }
+.fig-dot { fill: var(--rose-700); }
+.fig-lbl { font-family: var(--display); font-size: 14px; font-weight: 700; fill: var(--ink); }
+
+/* ── Mesura: l'escala de les unitats ────────────────────── */
+.es-stage { flex-direction: column; gap: 12px; }
+.es-stairs { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: end; gap: 4px; width: 100%; max-width: 640px; height: 230px; }
+.es-step {
+  height: var(--h); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 4px;
+  padding: 8px 2px; border: 2px solid var(--teal-300); border-radius: 12px 12px 4px 4px; cursor: pointer;
+  background: var(--teal-50); color: var(--teal-700); font-family: var(--display);
+  transition: transform .15s, background .15s;
+}
+.es-step:hover { transform: translateY(-3px); }
+.es-step.is-cur { background: var(--teal-600); border-color: var(--teal-700); color: var(--white); }
+.es-step.is-prev { border-style: dashed; border-color: var(--teal-700); }
+.es-unit { font-size: 1.15rem; font-weight: 700; }
+.es-val { font-size: .8rem; font-weight: 700; word-break: break-all; line-height: 1.15; }
+.es-step.is-cur .es-val { font-size: .95rem; }
+.es-legend { text-align: center; margin: 0; }
+.viz-buttons .btn.is-on, .fg-shapes .btn.is-on { background: var(--blue); color: var(--white); border-color: var(--blue-sh); }
+
+/* ── Mesura: àrees de les figures ───────────────────────── */
+.fg-svg { width: 100%; max-width: 560px; height: auto; }
+.fg-grid { stroke: var(--slate-200); stroke-width: 1; }
+.fg-shape { fill: var(--teal-100); fill-opacity: .85; stroke: var(--teal-700); stroke-width: 3; stroke-linejoin: round; }
+.fg-ghost { fill: none; stroke: var(--indigo-400); stroke-width: 2; stroke-dasharray: 6 5; }
+.fg-cut { fill: var(--amber-200); fill-opacity: .7; stroke: var(--amber-700); stroke-width: 2; stroke-dasharray: 4 4; }
+.fg-height { stroke: var(--rose-700); stroke-width: 2.5; stroke-dasharray: 5 4; }
+.fg-sliders { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 12px 0; }
+.fg-slider { display: flex; flex-direction: column; gap: 4px; min-width: 180px; flex: 1 1 180px; font-weight: 700; color: var(--ink-2); }
+.fg-slider input { width: 100%; accent-color: var(--teal-600); }
+
 /* ── Mòbil (al final perquè guanyi a les regles base) ─── */
 /* Mòbil: la navegació baixa a una barra inferior, a l'abast del polze. */
 @media (max-width: 720px) {
@@ -1172,4 +1239,28 @@ input:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
   .ans-frac-bar { width: 124px; height: 4px; }
   .fb-row { grid-template-columns: 44px 1fr; gap: 8px; }
   .fb-bar { height: 34px; }
+}
+
+@media (max-width: 640px) {
+  /* Mesura: la figura i la unitat més compactes, perquè el botó Comprova quedi a la vista. */
+  .fig { width: 190px; max-height: 118px; }
+  .q-fig { gap: 0 10px; }
+  .fig-data { font-size: .85rem; }
+  .ans-unit { font-size: 1.4rem; }
+  .ans-with-unit .ans-number { width: min(190px, 100%); }
+  /* L'escala, en mòbil, és una llista esglaonada: cada graó una mica més a la dreta. */
+  .es-stairs { display: flex; flex-direction: column; align-items: stretch; height: auto; gap: 4px; }
+  .es-step {
+    height: auto; flex-direction: row-reverse; justify-content: space-between; align-items: baseline;
+    margin-left: calc(var(--i) * 12px); padding: 6px 12px; border-radius: 10px;
+  }
+  .es-step:hover { transform: none; }
+  .es-unit { font-size: 1rem; }
+  .es-val, .es-step.is-cur .es-val { font-size: 1rem; word-break: normal; }
+}
+@media (max-width: 480px) {
+  /* El selector de curs ha de cabre: amaguem el nom de l'app (el logo continua portant a l'inici). */
+  .brand-name { display: none; }
+  .topbar-left { gap: 8px; }
+  .course-switch button { padding: 4px 9px; }
 }

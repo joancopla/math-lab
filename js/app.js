@@ -22,6 +22,10 @@
     if (typeof cleanup === 'function') cleanup();
     cleanup = null;
     const path = decodeURIComponent(location.hash.replace(/^#/, '')) || '/';
+    // Un enllaç a un tema d'un altre curs (p. ex. #/tema/mesura des de 1r ESO) canvia el curs.
+    const tm = path.match(/^\/(?:tema|repte|examen)\/([\w-]+)/);
+    const linked = tm && ML.topics.get(tm[1]);
+    if (linked) ML.storage.setCourse(linked.course);
     const route = routes.find(([re]) => re.test(path));
     root.innerHTML = '';
     cleanup = route ? route[1](root, path.match(route[0])) : V().notFound(root);
@@ -43,7 +47,7 @@
     const m = path.match(/^\/(?:tema|repte|examen)\/([\w-]+)/);
     const pickTopic = (id) => {
       const t = id && ML.topics.get(id);
-      return t && !t.comingSoon ? t : null;
+      return t && !t.comingSoon && t.course === ML.topics.course() ? t : null;
     };
     const t = pickTopic(m && m[1]) || pickTopic(s.last && s.last.topic) || ML.topics.available()[0];
     if (!t) return;
@@ -56,7 +60,34 @@
     link('challenge').href = `#/repte/${t.id}`;
   }
 
+  /** Selector de curs (1r ESO / 6è) de la capçalera, el títol de la pàgina i el peu. */
+  function updateCourse() {
+    const c = ML.topics.courseInfo();
+    const box = document.querySelector('.js-course');
+    if (box && !box.children.length) {
+      box.innerHTML = ML.topics.courses.map((x) => `<button type="button" data-course="${x.id}">${x.label}</button>`).join('');
+      box.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-course]');
+        if (!b || b.dataset.course === ML.topics.course()) return;
+        ML.storage.setCourse(b.dataset.course);
+        if (location.hash === '' || location.hash === '#/') render();
+        else location.hash = '#/';
+      });
+    }
+    if (box) {
+      box.querySelectorAll('[data-course]').forEach((b) => {
+        const on = b.dataset.course === c.id;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    document.title = `Math Lab ${c.label}`;
+    const foot = document.querySelector('.js-footer');
+    if (foot) foot.textContent = `Math Lab · ${c.name}`;
+  }
+
   function updateHeader() {
+    updateCourse();
     const s = ML.storage.get();
     const streak = ML.storage.dayStreak();
     const stars = ML.storage.starTotals();

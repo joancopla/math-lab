@@ -70,11 +70,17 @@
 
   C.evaluate = (ex, raw) => {
     const type = ex.input.type;
-    const value = C.parse(ex.input, raw);
+    const answerKey = C.key(type, ex.answer);
+    let value = C.parse(ex.input, raw);
+    // Amb decimals, «3.500» pot ser 3,5 o 3.500 (punt de milers): si la lectura amb milers és la resposta
+    // (o l'única possible, com «3.000.000»), es pren aquesta.
+    if (type === 'number' && ex.input.decimal && typeof raw === 'string' && /^\s*-?[1-9]\d{0,2}(\.\d{3})+\s*$/.test(raw)) {
+      const alt = U.parseNumber(raw);
+      if (value === null || C.key(type, alt) === answerKey) value = alt;
+    }
     if (value === null) return { valid: false };
 
     const key = C.key(type, value);
-    const answerKey = C.key(type, ex.answer);
     const anyForm = type === 'fraction' && ex.input.anyForm && C.sameValue(value, ex.answer);
     if (key === answerKey || anyForm || (ex.accept && ex.accept(value))) return { valid: true, correct: true, value };
 

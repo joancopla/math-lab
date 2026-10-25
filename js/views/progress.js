@@ -8,11 +8,16 @@
   ML.views.progress = (root) => {
     const s = ML.storage.get();
     const pct = s.totals.tries ? Math.round((100 * s.totals.ok) / s.totals.tries) : 0;
-    const errs = ML.storage.topErrors(null, 6);
+    // Errors dels temes del curs actual.
+    const errs = ML.storage.topErrors(null, 100).filter((e) => {
+      const t = ML.topics.get(e.topic);
+      return t && t.course === ML.topics.course();
+    }).slice(0, 6);
+    const exams = ML.storage.exams();
 
     root.innerHTML = `
       ${ML.ui.crumbs([['Inici', '#/'], ['Progrés']])}
-      <h1>El meu progrés</h1>
+      <h1>El meu progrés <span class="muted">· ${ML.topics.courseInfo().label}</span></h1>
 
       <form class="name-form js-name">
         <label for="name-edit">Nom</label>
@@ -51,8 +56,8 @@
       }).join('')}
 
       <h2 class="section-title">Exàmens sorpresa</h2>
-      ${(s.exams || []).length ? `
-        <div class="exam-history">${s.exams.slice(-10).reverse().map((x) => {
+      ${exams.length ? `
+        <div class="exam-history">${exams.slice(-10).reverse().map((x) => {
           const g = Math.round((x.ok / x.n) * 100) / 10;
           const [y, m, d] = x.date.split('-');
           const tt = x.topic && ML.topics.get(x.topic);

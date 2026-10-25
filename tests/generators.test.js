@@ -54,6 +54,11 @@ const root = path.join(__dirname, '..');
   'js/topics/decimals/quadricula.js',
   'js/topics/decimals/coma.js',
   'js/topics/decimals/index.js',
+  'js/topics/mesura/errors.js',
+  'js/topics/mesura/exercises.js',
+  'js/topics/mesura/escala.js',
+  'js/topics/mesura/figures.js',
+  'js/topics/mesura/index.js',
   'js/topics/properament.js',
 ].forEach((f) => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f }));
 
@@ -67,16 +72,19 @@ const fail = (msg, ex) => {
 };
 
 /** Converteix un valor en l'entrada en brut que escriuria l'alumna. */
-function toRaw(type, v) {
+function toRaw(type, v, input = {}) {
   if (type === 'power') return { base: String(v.base), exp: String(v.exp) };
   if (type === 'fraction') return { num: String(v.num), den: String(v.den) };
+  // Amb decimals, l'alumna escriu la coma (sense punt de milers): 2,125.
+  if (input.decimal) return String(v).replace('.', ',');
   return String(v);
 }
 
 const bad = /NaN|undefined|null|\[object/;
 const gcdT = (a, b) => (b ? gcdT(b, a % b) : Math.abs(a));
 
-for (const topic of ML.topics.available()) {
+// Tots els temes, de tots els cursos (1r ESO i 6è).
+for (const topic of ML.topics.everything().filter((x) => !x.comingSoon)) {
   const errorIds = new Set([...Object.keys(topic.errors), ...Object.keys(C.coreErrors)]);
   for (const skill of topic.skills) {
     for (const level of [1, 2, 3]) {
@@ -96,7 +104,7 @@ for (const topic of ML.topics.available()) {
         if (texts.some((s) => typeof s !== 'string' || bad.test(s))) fail(`${where}: text amb NaN/undefined`, ex);
 
         // La resposta correcta s'accepta.
-        const ok = C.evaluate(ex, toRaw(type, ex.answer));
+        const ok = C.evaluate(ex, toRaw(type, ex.answer, ex.input));
         if (!ok.valid || !ok.correct) fail(`${where}: la resposta correcta no es valida`, ex);
 
         if (type === 'number' && !ex.input.decimal && (!Number.isInteger(ex.answer) || (ex.answer < 0 && !ex.input.signed))) fail(`${where}: resposta no entera (o negativa sense input.signed)`, ex);
@@ -122,7 +130,7 @@ for (const topic of ML.topics.available()) {
           if (!errorIds.has(t.id)) fail(`${where}: error desconegut "${t.id}"`, ex);
           if (t.match === undefined) continue;
           if (C.key(type, t.match) === C.key(type, ex.answer)) continue; // s'ignora (coincideix amb la resposta)
-          const r = C.evaluate(ex, toRaw(type, t.match));
+          const r = C.evaluate(ex, toRaw(type, t.match, ex.input));
           if (r.correct) fail(`${where}: un parany es dona per bo`, ex);
           else trapIds.add(r.trap.id);
         }
@@ -152,6 +160,10 @@ if (!r7.correct) fail('Amb anyForm, 6/8 hauria de valer per 3/4');
 if (C.evaluate(fx, { num: '3', den: '0' }).valid) fail('Un denominador 0 no hauria de ser vàlid');
 const dx = { input: { type: 'number', decimal: true }, answer: 2.125, traps: [] };
 if (!C.evaluate(dx, '2,125').correct || !C.evaluate(dx, '2.125').correct) fail('Amb decimals, "2,125" i "2.125" haurien de valer 2,125');
+const big = { input: { type: 'number', decimal: true }, answer: 3500, traps: [] };
+if (!C.evaluate(big, '3.500').correct || !C.evaluate(Object.assign({}, big, { answer: 3.5 }), '3.500').correct) fail('Amb decimals, "3.500" hauria de valer tant 3.500 com 3,5 (segons la resposta)');
+if (!C.evaluate(Object.assign({}, big, { answer: 3000000 }), '3.000.000').correct) fail('Amb decimals, "3.000.000" hauria de valer 3000000');
+if (ML.topics.everything().some((x) => !ML.topics.courses.some((c) => c.id === x.course))) fail('Hi ha un tema amb un curs desconegut');
 if (ML.utils.fmt(1234.5) !== '1234,5' || ML.utils.fmt(12345.25) !== '12.345,25' || ML.utils.fmt(-0.75) !== '−0,75') fail('fmt de decimals incorrecte');
 
 if (failures) {

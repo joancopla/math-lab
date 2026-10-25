@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Math Lab 1r ESO</title>
-  <meta name="description" content="Laboratori de matemàtiques de 1r d'ESO: exercicis aleatoris amb correcció d'errors típics.">
+  <meta name="description" content="Laboratori de matemàtiques de 6è de primària i 1r d'ESO: exercicis aleatoris amb correcció d'errors típics.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='14' y='46' font-family='Arial' font-weight='bold' font-size='34' fill='white'%3Ex%3C/text%3E%3Ctext x='36' y='28' font-family='Arial' font-weight='bold' font-size='20' fill='%23fbbf24'%3E2%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,10 +16,14 @@
 <body>
   <header class="topbar">
     <div class="topbar-row">
-      <a href="#/" class="brand" aria-label="Math Lab 1r ESO, inici">
-        <span class="brand-mark"><span aria-hidden="true" class="ico fill">rocket_launch</span></span>
-        <span class="brand-name">Math Lab <span class="brand-sub">1r ESO</span></span>
-      </a>
+      <div class="topbar-left">
+        <a href="#/" class="brand" aria-label="Math Lab, inici">
+          <span class="brand-mark"><span aria-hidden="true" class="ico fill">rocket_launch</span></span>
+          <span class="brand-name">Math Lab</span>
+        </a>
+        <!-- Selector de curs: els botons els crea js/app.js a partir de ML.topics.courses. -->
+        <div class="course-switch js-course" role="group" aria-label="Curs"></div>
+      </div>
       <div class="hud-chips">
         <span class="chip chip-streak js-hdr-streak" title="Dies seguits practicant"><span aria-hidden="true" class="ico fill">local_fire_department</span><b>0</b><small>dies</small></span>
         <span class="chip chip-stars js-hdr-stars" title="Estrelles aconseguides"><span aria-hidden="true" class="ico fill">star</span><b>0</b><small>/ 105</small></span>
@@ -38,7 +42,7 @@
 
   <main id="app" class="container"></main>
 
-  <footer class="footer">Math Lab 1r ESO</footer>
+  <footer class="footer js-footer">Math Lab</footer>
 
   <noscript><p class="container">Aquesta aplicació necessita JavaScript.</p></noscript>
 
@@ -77,6 +81,12 @@
   <script src="js/topics/decimals/quadricula.js"></script>
   <script src="js/topics/decimals/coma.js"></script>
   <script src="js/topics/decimals/index.js"></script>
+  <!-- 6è de primària -->
+  <script src="js/topics/mesura/errors.js"></script>
+  <script src="js/topics/mesura/exercises.js"></script>
+  <script src="js/topics/mesura/escala.js"></script>
+  <script src="js/topics/mesura/figures.js"></script>
+  <script src="js/topics/mesura/index.js"></script>
   <script src="js/topics/properament.js"></script>
 
   <!-- Vistes i arrencada -->

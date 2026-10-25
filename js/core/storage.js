@@ -11,6 +11,7 @@
   const fresh = () => ({
     version: 1,
     name: '',
+    course: '1eso', // curs triat al menú de dalt (1r ESO o 6è)
     points: 0,
     totals: { tries: 0, ok: 0 },
     days: { last: null, streak: 0, best: 0, log: [] }, // dies amb l'objectiu diari complert
@@ -19,12 +20,13 @@
     skills: {},     // "tema/habilitat" -> { levels: { 1: { tries, ok, run, bestRun } }, lastAt }
     errors: {},     // "tema:idError" -> recompte
     challenge: {},  // tema -> { best, bestStreak, played }
-    exams: [],      // exàmens sorpresa: [{ date, ok, n }], els últims 30
+    exams: [],      // exàmens: [{ date, ok, n, topic, course }], els últims 30 (topic: null si és barrejat)
     examSeen: [],   // empremtes dels enunciats que ja han sortit en algun examen (les últimes 300)
     last: null,     // última pràctica: { topic, skill, level }
   });
 
   let state = load();
+  ML.topics.setCourse(state.course);
   const listeners = new Set();
 
   function load() {
@@ -118,6 +120,24 @@
       return Object.assign({ goalReached }, ls);
     },
 
+    /** Canvia el curs (1r ESO o 6è): a partir d'ara només es mostren els temes d'aquest curs. */
+    setCourse(id) {
+      if (state.course === id) return;
+      ML.topics.setCourse(id);
+      state.course = ML.topics.course();
+      save();
+    },
+
+    /** Exàmens del curs actual; amb topic, només els d'aquest tema (null: els barrejats). */
+    exams(topic) {
+      const course = ML.topics.course();
+      return (state.exams || []).filter((x) => {
+        const t = x.topic && ML.topics.get(x.topic);
+        const c = t ? t.course : x.course || '1eso';
+        return c === course && (topic === undefined || (x.topic || null) === topic);
+      });
+    },
+
     setAskedName() {
       state.askedName = true;
       save();
@@ -151,8 +171,8 @@
 
     /** Desa el resultat d'un examen (topic: null si és barrejat). Retorna la millor nota anterior del mateix tipus. */
     recordExam(ok, n, topic = null) {
-      const prevBest = (state.exams || []).filter((x) => (x.topic || null) === topic).reduce((m, x) => Math.max(m, x.ok / x.n), 0);
-      state.exams = (state.exams || []).concat({ date: U.today(), ok, n, topic }).slice(-30);
+      const prevBest = ML.storage.exams(topic).reduce((m, x) => Math.max(m, x.ok / x.n), 0);
+      state.exams = (state.exams || []).concat({ date: U.today(), ok, n, topic, course: ML.topics.course() }).slice(-30);
       save();
       return { prevBest: Math.round(prevBest * 100) / 10 };
     },

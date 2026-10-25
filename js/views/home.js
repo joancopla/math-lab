@@ -13,11 +13,17 @@
 
   /** Apartat «actual»: el darrer practicat si no està acabat; si no, el primer sense les 3 estrelles. */
   function currentSkill(topic, s) {
-    if (s.last && s.last.topic === topic.id && starCount(topic.id, s.last.skill) < 3) {
+    if (lastHere(s) && s.last.topic === topic.id && starCount(topic.id, s.last.skill) < 3) {
       return { skill: ML.topics.skill(topic.id, s.last.skill), level: s.last.level };
     }
     const sk = topic.skills.find((x) => starCount(topic.id, x.id) < 3) || topic.skills[0];
     return { skill: sk, level: ML.storage.recommendedLevel(topic.id, sk.id) };
+  }
+
+  /** L'última pràctica, si és d'un tema del curs actual (si no, null). */
+  function lastHere(s) {
+    const t = s.last && ML.topics.get(s.last.topic);
+    return t && !t.comingSoon && t.course === ML.topics.course() ? s.last : null;
   }
 
   const starsHtml = (n) => `<span class="mini-stars" aria-label="${n} de 3 estrelles">${
@@ -29,7 +35,7 @@
     const run = Math.min(ls.run, STAR);
     const totals = ML.storage.starTotals();
     const started = s.totals.tries > 0;
-    const intro = s.last
+    const intro = lastHere(s)
       ? `L'última vegada vas practicar <b>${ML.topics.skill(s.last.topic, s.last.skill).title.toLowerCase()}</b>. Continuem?`
       : 'Fes 10 exercicis cada dia al teu ritme. Quan t\'equivoquis, et diré quin error has fet i com arreglar-lo.';
     const today = ML.storage.today();
@@ -166,14 +172,14 @@
   }
 
   function examCard() {
-    const past = ML.storage.get().exams || [];
-    const last = past[past.length - 1];
+    const last = ML.storage.exams().slice(-1)[0];
+    const solo = ML.topics.available().length === 1;
     return `
       <a class="panel side-card visual-card exam-card" href="#/examen">
         <span class="side-emoji">📝</span>
         <div><h3>Examen sorpresa</h3><p>${last
           ? `Últim examen: ${U.fmt(Math.round((last.ok / last.n) * 100) / 10)}. T'atreveixes amb un altre?`
-          : '10 preguntes de tots els temes, sobretot del que menys has practicat. Sense pistes!'}</p></div>
+          : `10 preguntes de ${solo ? 'tots els apartats' : 'tots els temes'}, sobretot del que menys has practicat. Sense pistes!`}</p></div>
       </a>`;
   }
 
@@ -190,7 +196,7 @@
   function worlds() {
     return `
       <section class="worlds">
-        <h2>Els temes de 1r d'ESO</h2>
+        <h2>Els temes de ${ML.topics.courseInfo().name}</h2>
         <div class="world-grid">
           ${ML.topics.all().map((t) => {
             if (t.comingSoon) {
@@ -220,8 +226,7 @@
   ML.views.home = (root) => {
     const s = ML.storage.get();
     // El tema de l'última pràctica; si no n'hi ha cap, el primer.
-    const lastTopic = s.last && ML.topics.get(s.last.topic);
-    const topic = lastTopic && !lastTopic.comingSoon ? lastTopic : ML.topics.available()[0];
+    const topic = (lastHere(s) && ML.topics.get(s.last.topic)) || ML.topics.available()[0];
     const cur = currentSkill(topic, s);
 
     root.innerHTML = `
