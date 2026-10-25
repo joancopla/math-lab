@@ -50,6 +50,16 @@
           <p class="record">🏆 Mode repte: ${ch ? `rècord de ${ch.best} punts i ratxa màxima de ${ch.bestStreak}, en ${ch.played} ${ch.played === 1 ? 'partida' : 'partides'}` : 'encara no hi has jugat'}</p>`;
       }).join('')}
 
+      <h2 class="section-title">Exàmens sorpresa</h2>
+      ${(s.exams || []).length ? `
+        <div class="exam-history">${s.exams.slice(-10).reverse().map((x) => {
+          const g = Math.round((x.ok / x.n) * 100) / 10;
+          const [y, m, d] = x.date.split('-');
+          const tt = x.topic && ML.topics.get(x.topic);
+          return `<span class="exam-chip ${g >= 5 ? 'is-pass' : 'is-fail'}"><b>${U.fmt(g)}</b><small>${tt ? tt.title : 'Barrejat'}</small><small>${d}/${m}/${y}</small></span>`;
+        }).join('')}</div>` : '<p class="muted">Encara no n\'has fet cap.</p>'}
+      <p><a class="btn btn-3d btn-blue" href="#/examen">📝 Fes un examen sorpresa</a></p>
+
       <h2 class="section-title">Errors que més repeteixo</h2>
       ${errs.length ? `<div class="mistakes">${errs.map((e) => {
         const info = ML.topics.errorInfo(e.topic, e.id);

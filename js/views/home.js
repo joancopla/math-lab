@@ -165,6 +165,18 @@
       </section>`;
   }
 
+  function examCard() {
+    const past = ML.storage.get().exams || [];
+    const last = past[past.length - 1];
+    return `
+      <a class="panel side-card visual-card exam-card" href="#/examen">
+        <span class="side-emoji">📝</span>
+        <div><h3>Examen sorpresa</h3><p>${last
+          ? `Últim examen: ${U.fmt(Math.round((last.ok / last.n) * 100) / 10)}. T'atreveixes amb un altre?`
+          : '10 preguntes de tots els temes, sobretot del que menys has practicat. Sense pistes!'}</p></div>
+      </a>`;
+  }
+
   function visualCard(topic) {
     const v = topic.visuals[0];
     if (!v) return '';
@@ -219,6 +231,7 @@
         <div class="home-side">
           ${weekCard()}
           ${challengeCard(topic)}
+          ${examCard()}
           ${visualCard(topic)}
         </div>
       </div>

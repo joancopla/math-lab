@@ -66,6 +66,7 @@
           <div class="ex-actions">
             ${type !== 'choice' ? '<button type="submit" class="btn btn-3d btn-blue btn-xl btn-grow"><span aria-hidden="true" class="ico fill">task_alt</span>Comprova<span class="hide-sm"> la resposta</span></button>' : ''}
             ${mode === 'practice' && ex.hint ? '<button type="button" class="btn btn-3d btn-yellow btn-xl js-hint"><span aria-hidden="true" class="ico fill">lightbulb</span>Una pista!</button>' : ''}
+            ${mode === 'exam' ? '<button type="button" class="btn btn-ghost btn-xl js-skip">No ho sé</button>' : ''}
           </div>
           <p class="ex-warn" hidden>Escriu la teva resposta abans de comprovar.</p>
         </form>
@@ -144,6 +145,17 @@
       submit();
     });
 
+    // Examen: «No ho sé» compta com a resposta en blanc i passa a la pregunta següent.
+    const skipBtn = form.querySelector('.js-skip');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', () => {
+        if (done) return;
+        done = true;
+        if (opts.onFirstAnswer) opts.onFirstAnswer({ correct: false, errorId: null, msg: null, skipped: true });
+        if (opts.onNext) opts.onNext();
+      });
+    }
+
     function readRaw() {
       if (type === 'number') return inputs[0].value;
       if (type === 'power') return { base: inputs[0].value, exp: inputs[1].value };
@@ -193,6 +205,15 @@
       warn.hidden = true;
       attempts++;
       setLocked(true);
+      // Examen: no es mostra si és correcte; es desa i es passa a la pregunta següent.
+      if (mode === 'exam') {
+        done = true;
+        if (opts.onFirstAnswer) {
+          opts.onFirstAnswer({ correct: res.correct, errorId: res.correct ? null : res.trap.id, msg: res.correct ? null : res.trap.msg, value: res.value });
+        }
+        if (opts.onNext) opts.onNext();
+        return;
+      }
       card.classList.toggle('is-right', res.correct);
       card.classList.toggle('is-wrong', !res.correct);
       if (type === 'choice') markChoices(res);

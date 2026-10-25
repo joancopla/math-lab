@@ -12,6 +12,7 @@
     [/^\/tema\/([\w-]+)\/visual\/([\w-]+)(?:\/([\w-]+))?$/, (root, m) => V().visual(root, m[1], m[2], m[3])], // m[3]: apartat opcional
     [/^\/repte\/([\w-]+)$/, (root, m) => V().challenge(root, m[1])],
     [/^\/progres$/, (root) => V().progress(root)],
+    [/^\/examen(?:\/([\w-]+))?$/, (root, m) => V().exam(root, m[1])],
   ];
 
   let cleanup = null;
@@ -39,7 +40,7 @@
 
   /** Els enllaços Tema / Visualitza / Repte del menú apunten al tema que s'està mirant (o a l'últim practicat). */
   function navTopic(path, s) {
-    const m = path.match(/^\/(?:tema|repte)\/([\w-]+)/);
+    const m = path.match(/^\/(?:tema|repte|examen)\/([\w-]+)/);
     const pickTopic = (id) => {
       const t = id && ML.topics.get(id);
       return t && !t.comingSoon ? t : null;

@@ -908,6 +908,37 @@ input:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
 .dc-d.is-zero { color: var(--slate-300); }
 .dc-comma { position: absolute; top: 4px; font: 700 2.4rem var(--display); color: var(--red); }
 .dc-ops .btn:disabled { opacity: .4; }
+
+/* ── Examen sorpresa ─────────────────────────────────────── */
+.exam-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 8px; }
+.exam-head b { font-family: var(--display); color: var(--ink-2); }
+.exam-bar { height: 10px; margin-bottom: 16px; border-radius: 6px; background: var(--slate-200); overflow: hidden; }
+.exam-bar span { display: block; height: 100%; width: 0; border-radius: 6px; background: var(--purple); transition: width .3s; }
+.exam-grade-label { margin: 0; font-weight: 800; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+.exam-grade { font: 700 4.5rem/1.1 var(--display); }
+.exam-grade.is-pass { color: var(--green-sh); }
+.exam-grade.is-fail { color: var(--red-sh); }
+.exam-review { display: grid; gap: 12px; text-align: left; }
+.exam-item { padding: 14px 16px; border-radius: 16px; border: 2px solid var(--slate-200); background: var(--white); }
+.exam-item.is-ok { border-color: var(--green-300); background: var(--green-soft); }
+.exam-item.is-ko { border-color: var(--red-200); }
+.exam-item p { margin: 6px 0; }
+.exam-item-head { font-weight: 800; color: var(--ink-2); }
+.exam-mark { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: 4px; border-radius: 50%; color: var(--white); font-size: .9rem; }
+.exam-item.is-ok .exam-mark { background: var(--green); }
+.exam-item.is-ko .exam-mark { background: var(--red); }
+.exam-history { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.exam-chip { display: inline-flex; flex-direction: column; align-items: center; min-width: 64px; padding: 6px 10px; border-radius: 14px; border: 2px solid var(--slate-200); background: var(--white); }
+.exam-chip b { font: 700 1.3rem var(--display); }
+.exam-chip small { color: var(--ink-3); }
+.exam-chip.is-pass b { color: var(--green-sh); }
+.exam-chip.is-fail b { color: var(--red-sh); }
+.exam-other { margin-top: 22px; }
+.exam-other .muted { margin-bottom: 8px; }
+.exam-topics { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.exam-topics .btn { gap: 8px; }
+.exam-topic-icon { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 4px; border-radius: 8px; background: var(--topic); color: var(--white); font: 700 .85rem var(--display); }
+.exam-topic-icon sup { font-size: .6em; }
 @media (max-width: 560px) {
   .seg button { padding: 6px 8px; font-size: .82rem; }
   .slider { width: 100%; }

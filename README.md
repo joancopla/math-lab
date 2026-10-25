@@ -43,6 +43,14 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   S'hi arriba des de «Visualitza» i des de la teoria de cada apartat (`#/tema/potencies/visual/pas-a-pas/quocient`).
 - **Mode repte**: preguntes barrejades, 3 vides, dificultat adaptativa, ratxes amb multiplicador de punts, rècords i
   repàs dels errors en acabar.
+- **Examen sorpresa** (`#/examen`): 10 preguntes de tots els temes (2 per tema), triades entre els apartats que menys
+  s'han practicat i sense repetir enunciats d'exàmens anteriors. Sense pistes ni correcció fins al final; botó «No ho sé».
+  En acabar: nota sobre 10 (Insuficient… Excel·lent) i repàs de cada pregunta amb l'error i la solució. Compta per a
+  l'objectiu diari i els errors, però no per a les ratxes de les estrelles. Hi ha accés des de l'inici i des del progrés.
+  També hi ha l'**examen d'un sol tema** (`#/examen/:tema`, des de la pàgina de cada tema): 10 preguntes, com a mínim
+  una de cada apartat i en l'ordre del tema, i les que sobren dels apartats menys practicats.
+  També hi ha l'**examen d'un sol tema** (`#/examen/:tema`, des de la pàgina de cada tema): 10 preguntes, com a mínim
+  una de cada apartat i en l'ordre del tema, i les que sobren dels apartats menys practicats.
 - **Progrés**: ratxa de dies seguits, estrelles, encerts per nivell, rècords i errors que més es repeteixen.
 
 ## Estructura

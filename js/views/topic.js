@@ -11,6 +11,15 @@
     .map(([label, href]) => (href ? `<a href="${href}">${label}</a>` : `<span>${label}</span>`))
     .join('<span class="sep">›</span>')}</nav>`;
 
+  /** «Última nota: 7 · Millor: 8,5» dels exàmens d'aquest tema, o '' si no n'hi ha cap. */
+  function examNote(topicId) {
+    const past = (ML.storage.get().exams || []).filter((x) => x.topic === topicId);
+    if (!past.length) return '';
+    const g = (x) => ML.utils.fmt(Math.round((x.ok / x.n) * 100) / 10);
+    const best = past.reduce((a, b) => (b.ok / b.n > a.ok / a.n ? b : a));
+    return `Última nota: <b>${g(past[past.length - 1])}</b> · Millor: <b>${g(best)}</b>`;
+  }
+
   ML.views.topic = (root, topicId) => {
     const t = ML.topics.get(topicId);
     if (!t || t.comingSoon) return ML.views.notFound(root);
@@ -37,6 +46,13 @@
           <div>
             <h3>Mode repte</h3>
             <p>${ch ? `El teu rècord: <b>${ch.best}</b> punts. Ratxa màxima: <b>${ch.bestStreak}</b>.` : 'Preguntes barrejades, 3 vides i ratxes. T\'hi atreveixes?'}</p>
+          </div>
+        </a>
+        <a class="action-card" href="#/examen/${t.id}">
+          <span class="action-emoji">📝</span>
+          <div>
+            <h3>Examen del tema</h3>
+            <p>${examNote(t.id) || '10 preguntes de tots els apartats, sense pistes. Al final, la nota.'}</p>
           </div>
         </a>
       </div>

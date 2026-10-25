@@ -19,6 +19,8 @@
     skills: {},     // "tema/habilitat" -> { levels: { 1: { tries, ok, run, bestRun } }, lastAt }
     errors: {},     // "tema:idError" -> recompte
     challenge: {},  // tema -> { best, bestStreak, played }
+    exams: [],      // exàmens sorpresa: [{ date, ok, n }], els últims 30
+    examSeen: [],   // empremtes dels enunciats que ja han sortit en algun examen (les últimes 300)
     last: null,     // última pràctica: { topic, skill, level }
   });
 
@@ -88,26 +90,30 @@
 
     /** Registra el primer intent d'un exercici.
      *  Retorna les estadístiques del nivell i `goalReached` si amb aquest exercici es completa l'objectiu diari. */
-    recordAnswer({ topic, skill, level, correct, errorId, points = 0 }) {
+    /*  Amb exam: true (examen sorpresa) compta per a l'objectiu diari i els errors, però no toca
+     *  les ratxes cap a l'estrella ni «l'última pràctica». */
+    recordAnswer({ topic, skill, level, correct, errorId, points = 0, exam = false }) {
       const goalReached = countToday(correct);
       const ls = levelStats(topic, skill, level);
       ls.tries++;
       state.totals.tries++;
       if (correct) {
         ls.ok++;
-        ls.run++;
-        ls.bestRun = Math.max(ls.bestRun, ls.run);
+        if (!exam) {
+          ls.run++;
+          ls.bestRun = Math.max(ls.bestRun, ls.run);
+        }
         state.totals.ok++;
         state.points += points;
       } else {
-        ls.run = 0;
+        if (!exam) ls.run = 0;
         if (errorId) {
           const ek = `${topic}:${errorId}`;
           state.errors[ek] = (state.errors[ek] || 0) + 1;
         }
       }
       state.skills[`${topic}/${skill}`].lastAt = Date.now();
-      state.last = { topic, skill, level };
+      if (!exam) state.last = { topic, skill, level };
       save();
       return Object.assign({ goalReached }, ls);
     },
@@ -141,6 +147,27 @@
       state.points += score;
       save();
       return { record, streakRecord, best: c.best, bestStreak: c.bestStreak };
+    },
+
+    /** Desa el resultat d'un examen (topic: null si és barrejat). Retorna la millor nota anterior del mateix tipus. */
+    recordExam(ok, n, topic = null) {
+      const prevBest = (state.exams || []).filter((x) => (x.topic || null) === topic).reduce((m, x) => Math.max(m, x.ok / x.n), 0);
+      state.exams = (state.exams || []).concat({ date: U.today(), ok, n, topic }).slice(-30);
+      save();
+      return { prevBest: Math.round(prevBest * 100) / 10 };
+    },
+
+    /** Empremtes d'enunciats que ja han sortit en exàmens. */
+    examSeen: () => new Set(state.examSeen || []),
+    markExamSeen(keys) {
+      state.examSeen = (state.examSeen || []).concat(keys).slice(-300);
+      save();
+    },
+
+    /** Intents totals d'un apartat (tots els nivells). */
+    skillTries(topic, skill) {
+      const s = state.skills[`${topic}/${skill}`];
+      return s ? Object.values(s.levels).reduce((n, l) => n + l.tries, 0) : 0;
     },
 
     level(topic, skill, level) {
