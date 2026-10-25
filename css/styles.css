@@ -555,6 +555,42 @@ b, strong { font-weight: 800; }
   background: var(--white); border: 1px solid var(--indigo-200); border-radius: 12px;
 }
 .warn { padding: 8px 12px; border-radius: 12px; background: var(--red-soft); color: var(--red-900); }
+
+/* ── Pas a pas (producte i quocient de potències) ────────── */
+.pap-tabs { margin-bottom: 16px; }
+.pap-stage { min-height: 300px; padding: 26px 16px 22px; display: flex; flex-direction: column; align-items: center; gap: 14px; overflow: hidden; }
+.pap-stage [hidden] { display: none !important; }
+.pap-math { font-family: var(--display); font-weight: 700; color: var(--indigo-700); white-space: nowrap; line-height: 1.1; }
+.pap-big { font-size: clamp(2.6rem, 11vw, 4rem); }
+.pap-mid { font-size: clamp(1.7rem, 7.4vw, 2.6rem); }
+.pap-math .pw sup { margin-left: .04em; vertical-align: .78em; }
+.pap-op { color: var(--ink-2); margin: 0 .16em; }
+.pap-f, .pap-cut { display: inline-block; position: relative; }
+.pap-grp { position: relative; display: inline-block; }
+.pap-row { position: relative; display: inline-flex; align-items: baseline; padding-bottom: 46px; }
+.pap-brace { position: absolute; left: 0; right: 0; top: calc(100% + 2px); height: 12px; border: 3px solid var(--purple); border-top: 0; border-radius: 0 0 12px 12px; }
+.pap-brace::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 3px; height: 8px; border-radius: 2px; background: var(--purple); transform: translateX(-50%); }
+.pap-blabel { position: absolute; left: 50%; top: calc(100% + 22px); transform: translateX(-50%); font: 700 1rem var(--display); color: var(--purple); white-space: nowrap; }
+.pap-frac { display: inline-flex; flex-direction: column; align-items: center; }
+.pap-num, .pap-den { display: inline-flex; align-items: baseline; }
+.pap-bar { align-self: stretch; height: 4px; margin: 6px -8px; border-radius: 2px; background: var(--ink-2); }
+.pap-slash { position: absolute; left: -22%; right: -22%; top: 50%; height: 5px; border-radius: 3px; background: var(--red); transform: rotate(-55deg) scaleX(0); }
+.pap-cut.is-cut .pap-slash { transform: rotate(-55deg) scaleX(1); }
+.pap-cut.is-cut .pap-f { opacity: .28; } /* s'esvaeix el 2, no la ratlla */
+.pap-text { margin: 18px 4px 0; min-height: 3.2em; font-size: 1.08rem; color: var(--ink-2); }
+.pap-text b { color: var(--ink); }
+.pap-note { margin-top: 14px; }
+.pap-note[hidden] { display: none; }
+.pap-note .formula { margin-bottom: 0; }
+.pap-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.pap-dots { display: flex; gap: 6px; }
+.pap-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--slate-200); transition: background .2s, transform .2s; }
+.pap-dots i.is-done { background: var(--indigo-200); }
+.pap-dots i.is-now { background: var(--purple); transform: scale(1.3); }
+.pap-sum { display: grid; gap: 14px; }
+.pap-sum .panel { padding: 18px; text-align: center; }
+.pap-sum h3 { margin-bottom: 6px; }
+.pap-sum p { margin: 6px 0 0; color: var(--ink-2); }
 .table-pows { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .table-pows span { padding: 2px 8px; border-radius: 8px; background: var(--white); border: 1px solid var(--indigo-200); font-family: var(--display); font-size: .9rem; }
 
@@ -737,6 +773,46 @@ input:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
 .strip-item:hover { border-color: var(--indigo-300); }
 .strip-item.is-on { background: var(--blue); border-color: var(--blue); color: var(--blue-100); box-shadow: 0 3px 0 var(--blue-sh); }
 .strip-item.is-on b { color: var(--white); }
+
+/* ── Divisibilitat: garbell, rectangles i descomposició ──── */
+.sieve-info { min-height: 80px; margin-top: 14px; }
+.sieve { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-width: 540px; margin: 14px 0 8px; }
+.sv {
+  aspect-ratio: 1; padding: 0; border: 2px solid var(--slate-200); border-radius: 10px; background: var(--white);
+  font: 700 .95rem var(--display); color: var(--ink); cursor: pointer; transition: background .25s, color .25s, border-color .25s;
+}
+.sv:hover { border-color: var(--indigo-300); }
+.sv.is-out { color: var(--ink-3); text-decoration: line-through; }
+.sv.by-1 { background: var(--slate-100); }
+.sv.by-2 { background: var(--blue-soft); border-color: var(--indigo-200); }
+.sv.by-3 { background: var(--purple-soft); border-color: var(--purple-200); }
+.sv.by-5 { background: var(--yellow-soft); border-color: var(--amber-200); }
+.sv.by-7 { background: var(--red-soft); border-color: var(--red-200); }
+.sv.is-prime { background: var(--green); border-color: var(--green-sh); color: var(--white); box-shadow: 0 3px 0 var(--green-sh); }
+.sv.pop { animation: sv-pop .3s ease; }
+@keyframes sv-pop { 50% { transform: scale(1.18); } }
+@media (prefers-reduced-motion: reduce) { .sv.pop { animation: none; } }
+.sieve-list { font-size: 1.1rem; line-height: 1.5; }
+.sieve-tip { margin: 0; font-size: .88rem; }
+.sieve-detail { min-height: 2.6em; }
+.sieve-n { margin-right: 4px; font-family: var(--display); font-size: 1.3rem; color: var(--indigo-700); }
+
+.rect-list { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: flex-end; justify-content: center; max-width: 100%; }
+.rect-fig { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 100%; margin: 0; }
+.rect-fig figcaption { font: 700 1rem var(--display); color: var(--indigo-700); }
+.viz-svg.rect-svg { max-width: 100%; height: auto; }
+
+.dec-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-weight: 800; }
+.dec-form label { display: flex; align-items: center; gap: 8px; }
+.dec-form input {
+  width: 120px; min-height: 44px; padding: 4px 10px; border: 3px solid var(--indigo-300); border-radius: 14px;
+  font-family: var(--display); font-size: 1.2rem; font-weight: 700; text-align: center;
+}
+.dec-table { border-collapse: collapse; font: 700 1.6rem var(--display); }
+.dec-table td { padding: 4px 18px; text-align: right; }
+.dec-table td.dec-p { min-width: 2.4em; border-left: 4px solid var(--ink-2); text-align: left; color: var(--purple); }
+.dec-table tr.is-now td:first-child { color: var(--blue); }
+.dec-table tr.is-one td { color: var(--green-sh); }
 @media (max-width: 560px) {
   .seg button { padding: 6px 8px; font-size: .82rem; }
   .slider { width: 100%; }
@@ -946,3 +1022,19 @@ input:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
 
 @media (max-width: 640px) { .hide-sm { display: none; } }
 
+
+@media (max-width: 640px) {
+  /* Pas a pas: el text i els botons a la vista sense desplaçar-se. */
+  .pap-stage { min-height: 250px; padding: 20px 10px 16px; }
+  .pap-text { margin-top: 12px; font-size: 1rem; }
+  .pap-controls { margin-top: 14px; }
+  .pap-controls .btn { padding: 10px 14px; }
+  .pap-dots { gap: 4px; }
+}
+
+@media (max-width: 560px) {
+  /* Garbell: les 100 caselles han de cabre a l'amplada del mòbil. */
+  .sieve { gap: 3px; }
+  .sv { border-radius: 7px; border-width: 1px; font-size: .78rem; }
+  .dec-table { font-size: 1.3rem; }
+}

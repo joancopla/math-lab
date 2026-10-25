@@ -106,7 +106,7 @@
         <div class="panel-head">
           <div>
             <p class="eyebrow"><span class="dot"></span>${topic.title}</p>
-            <h2>El camí de les ${topic.title.toLowerCase()}</h2>
+            <h2>${topic.pathTitle || `El camí: ${topic.title}`}</h2>
           </div>
           <div class="goal"><span aria-hidden="true" class="ico fill">emoji_events</span><span><small>Objectiu</small><b>${totals} de ${topic.skills.length * 3} estrelles</b></span></div>
         </div>
@@ -170,7 +170,7 @@
     if (!v) return '';
     return `
       <a class="panel side-card visual-card" href="#/tema/${topic.id}/visual/${v.id}">
-        <span class="side-emoji">🧊</span>
+        <span class="side-emoji">${v.emoji || '🧊'}</span>
         <div><h3>${v.title}</h3><p>${v.description}</p></div>
       </a>`;
   }
@@ -207,7 +207,9 @@
 
   ML.views.home = (root) => {
     const s = ML.storage.get();
-    const topic = ML.topics.available()[0];
+    // El tema de l'última pràctica; si no n'hi ha cap, el primer.
+    const lastTopic = s.last && ML.topics.get(s.last.topic);
+    const topic = lastTopic && !lastTopic.comingSoon ? lastTopic : ML.topics.available()[0];
     const cur = currentSkill(topic, s);
 
     root.innerHTML = `

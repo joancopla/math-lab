@@ -13,6 +13,7 @@
   ML.topics.register({
     id: 'potencies',
     title: 'Potències',
+    pathTitle: 'El camí de les potències',
     icon: 'a<sup>n</sup>',
     color: '#2563eb',
     description: 'Multiplicacions repetides: notació, càlcul, operacions amb potències i quadrats i cubs perfectes.',
@@ -59,7 +60,8 @@
           <p>Per multiplicar potències de la <b>mateixa base</b>, es deixa la base i se <b>sumen</b> els exponents.</p>
           <div class="formula">${H('a', 'm')} · ${H('a', 'n')} = ${H('a', 'm + n')}</div>
           <p>Exemple: ${H(3, 2)} · ${H(3, 4)} = (3 · 3) · (3 · 3 · 3 · 3) = ${H(3, 6)}</p>
-          <p class="warn">⚠️ Un nombre sense exponent té exponent 1: 5 = ${H(5, 1)}. Per tant, 5 · ${H(5, 3)} = ${H(5, 4)}.</p>`,
+          <p class="warn">⚠️ Un nombre sense exponent té exponent 1: 5 = ${H(5, 1)}. Per tant, 5 · ${H(5, 3)} = ${H(5, 4)}.</p>
+          <p><a class="btn btn-small btn-ghost" href="#/tema/potencies/visual/pas-a-pas/producte">👣 Mira-ho pas a pas</a></p>`,
         generate: G.producte,
       },
       {
@@ -72,7 +74,8 @@
           <p>Per dividir potències de la <b>mateixa base</b>, es deixa la base i es <b>resten</b> els exponents.</p>
           <div class="formula">${H('a', 'm')} : ${H('a', 'n')} = ${H('a', 'm − n')}</div>
           <p>Exemple: ${U.frac('2 · 2 · <s>2</s> · <s>2</s> · <s>2</s>', '<s>2</s> · <s>2</s> · <s>2</s>')} → ${H(2, 5)} : ${H(2, 3)} = ${H(2, 2)}</p>
-          <p>Si els exponents són iguals: ${H(4, 3)} : ${H(4, 3)} = ${H(4, 0)} = 1.</p>`,
+          <p>Si els exponents són iguals: ${H(4, 3)} : ${H(4, 3)} = ${H(4, 0)} = 1.</p>
+          <p><a class="btn btn-small btn-ghost" href="#/tema/potencies/visual/pas-a-pas/quocient">👣 Mira-ho pas a pas</a></p>`,
         generate: G.quocient,
       },
       {
@@ -120,6 +123,13 @@
         title: 'Àrees i volums',
         description: 'Mira per què n² és un quadrat i n³ és un cub. Construeix-los pas a pas.',
         mount: P.visual.mount,
+      },
+      {
+        id: 'pas-a-pas',
+        emoji: '👣',
+        title: 'Producte i quocient, pas a pas',
+        description: 'Desplega les potències, compta els factors i descobreix per què els exponents se sumen o es resten.',
+        mount: P.pasAPas.mount,
       },
     ],
   });

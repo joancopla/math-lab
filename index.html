@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <!-- Només les icones que fa servir l'app (icon_names, en ordre alfabètic). Si n'afegeixes una, posa-la aquí. -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&icon_names=arrow_forward,auto_awesome,bolt,check,check_circle,close,edit_note,emoji_events,explore,functions,leaderboard,lightbulb,lightbulb_circle,local_fire_department,lock,menu_book,military_tech,play_arrow,play_circle,psychology,replay,rocket_launch,search,sentiment_very_satisfied,star,stars,task_alt,view_in_ar,visibility&display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&icon_names=arrow_back,arrow_forward,auto_awesome,bolt,check,check_circle,close,edit_note,emoji_events,explore,functions,leaderboard,lightbulb,lightbulb_circle,local_fire_department,lock,menu_book,military_tech,play_arrow,play_circle,psychology,replay,rocket_launch,search,sentiment_very_satisfied,star,stars,task_alt,view_in_ar,visibility&display=block" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -22,14 +22,14 @@
       </a>
       <div class="hud-chips">
         <span class="chip chip-streak js-hdr-streak" title="Dies seguits practicant"><span aria-hidden="true" class="ico fill">local_fire_department</span><b>0</b><small>dies</small></span>
-        <span class="chip chip-stars js-hdr-stars" title="Estrelles aconseguides"><span aria-hidden="true" class="ico fill">star</span><b>0</b><small>/ 21</small></span>
+        <span class="chip chip-stars js-hdr-stars" title="Estrelles aconseguides"><span aria-hidden="true" class="ico fill">star</span><b>0</b><small>/ 42</small></span>
         <span class="chip chip-points js-hdr-points" title="Punts"><span aria-hidden="true" class="ico fill">bolt</span><b>0</b><small>punts</small></span>
         <a class="avatar js-hdr-avatar" href="#/progres" title="El meu progrés" aria-label="El meu progrés">?</a>
       </div>
     </div>
     <nav class="subnav" aria-label="Seccions">
       <a href="#/" data-nav="home"><span aria-hidden="true" class="ico">explore</span>Inici</a>
-      <a href="#/tema/potencies" data-nav="topic"><span aria-hidden="true" class="ico">functions</span>Potències</a>
+      <a href="#/tema/potencies" data-nav="topic"><span aria-hidden="true" class="ico">functions</span><span class="js-nav-topic">Potències</span></a>
       <a href="#/tema/potencies/visual/arees-volums" data-nav="visual"><span aria-hidden="true" class="ico">view_in_ar</span>Visualitza</a>
       <a href="#/repte/potencies" data-nav="challenge" class="is-gold"><span aria-hidden="true" class="ico fill">military_tech</span>Repte</a>
       <a href="#/progres" data-nav="progress"><span aria-hidden="true" class="ico">leaderboard</span>Progrés</a>
@@ -54,7 +54,14 @@
   <script src="js/topics/potencies/errors.js"></script>
   <script src="js/topics/potencies/exercises.js"></script>
   <script src="js/topics/potencies/visual.js"></script>
+  <script src="js/topics/potencies/pas-a-pas.js"></script>
   <script src="js/topics/potencies/index.js"></script>
+  <script src="js/topics/divisibilitat/errors.js"></script>
+  <script src="js/topics/divisibilitat/exercises.js"></script>
+  <script src="js/topics/divisibilitat/visual.js"></script>
+  <script src="js/topics/divisibilitat/garbell.js"></script>
+  <script src="js/topics/divisibilitat/descomposicio.js"></script>
+  <script src="js/topics/divisibilitat/index.js"></script>
   <script src="js/topics/properament.js"></script>
 
   <!-- Vistes i arrencada -->

@@ -4,7 +4,7 @@
 
   ML.views = ML.views || {};
 
-  ML.views.visual = (root, topicId, visualId) => {
+  ML.views.visual = (root, topicId, visualId, part) => {
     const t = ML.topics.get(topicId);
     const v = t && t.visuals.find((x) => x.id === visualId);
     if (!v) return ML.views.notFound(root);
@@ -15,6 +15,6 @@
       <p class="lead">${v.description}</p>
       <div class="visual-host"></div>`;
 
-    return v.mount(root.querySelector('.visual-host'));
+    return v.mount(root.querySelector('.visual-host'), { tema: part });
   };
 })(window.MathLab);

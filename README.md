@@ -7,6 +7,11 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
 
 - **Potències** (primer mòdul), amb 7 apartats × 3 nivells:
   notació · càlcul · producte · quocient · potència d'una potència · exponents 0 i 1 · quadrats i cubs perfectes.
+- **Divisibilitat** (segon mòdul), amb 7 apartats × 3 nivells:
+  múltiples i divisors · criteris de divisibilitat · primers i compostos · descomposició en factors primers · mcd · mcm ·
+  problemes de mcd i mcm. Errors típics detectats: confondre múltiple i divisor, «1 és primer», «tots els senars són
+  primers», mirar l'última xifra per al 3, factors no primers a la descomposició, mcm = producte, mcd ↔ mcm…
+  Tres visualitzacions: divisors amb rectangles, el garbell d'Eratòstenes i la descomposició pas a pas (taula de divisions).
 - Exercicis **generats aleatòriament**. Quan la resposta és incorrecta, es **detecta l'error típic** (p. ex. «2³ = 6»,
   «a³ · a⁴ = a¹²», «a⁰ = 0», «√36 = 18») i se n'explica el motiu, amb solució pas a pas.
 - En pràctica es pot reintentar i demanar pistes. Es practica en **rondes de 10 exercicis** que acaben amb un resum
@@ -15,6 +20,9 @@ Obre `index.html` amb el navegador (doble clic) i ja funciona. El progrés es de
   complir l'objectiu, pujar de nivell al repte o batre un rècord.
 - **Visualització interactiva**: n¹ com a línia, n² com a àrea (amb la «L» que passa de n² a (n+1)²) i n³ com a volum
   isomètric; construcció pas a pas i mini-joc «Endevina».
+- **Producte i quocient, pas a pas**: explicació animada que avança amb «Següent»: les potències es despleguen
+  en factors, es compten (3 + 4 = 7) o es ratllen per parelles (5 − 3 = 2), i acaba amb la regla i l'error típic.
+  S'hi arriba des de «Visualitza» i des de la teoria de cada apartat (`#/tema/potencies/visual/pas-a-pas/quocient`).
 - **Mode repte**: preguntes barrejades, 3 vides, dificultat adaptativa, ratxes amb multiplicador de punts, rècords i
   repàs dels errors en acabar.
 - **Progrés**: ratxa de dies seguits, estrelles, encerts per nivell, rècords i errors que més es repeteixen.
@@ -34,8 +42,10 @@ js/topics/
   potencies/                un tema = una carpeta
     errors.js               catàleg d'errors típics
     exercises.js            generadors per apartat i nivell
-    visual.js               visualització interactiva
+    visual.js               visualització interactiva (àrees i volums)
+    pas-a-pas.js            producte i quocient, pas a pas (accepta un apartat: mount(c, { tema }))
     index.js                registra el tema
+  divisibilitat/            errors, exercicis, visual.js (rectangles), garbell.js, descomposicio.js, index.js
   properament.js            temes «Aviat» que surten a l'inici
 js/views/                   pantalles: inici, tema, pràctica, visualització, repte, progrés
 js/app.js                   router per hash (#/tema/potencies/…)
@@ -44,24 +54,24 @@ tests/generators.test.js    prova de robustesa dels generadors
 
 Són scripts clàssics (no mòduls ES) a propòsit: així l'app funciona obrint el fitxer directament, sense servidor.
 
-## Com afegir un tema nou (p. ex. divisibilitat)
+## Com afegir un tema nou (p. ex. enters)
 
-1. Crea `js/topics/divisibilitat/` amb `errors.js`, `exercises.js` i `index.js` (copia l'estructura de `potencies`).
+1. Crea `js/topics/enters/` amb `errors.js`, `exercises.js` i `index.js` (copia l'estructura de `potencies` o `divisibilitat`).
 2. A `index.js`, registra'l:
 
    ```js
    MathLab.topics.register({
-     id: 'divisibilitat', title: 'Divisibilitat', icon: '÷', color: '#e0703a',
+     id: 'enters', title: 'Nombres enters', icon: '±', color: '#2a9d8f',
      description: '…',
-     errors: { confon_multiple_divisor: { title: '…', explain: '…' } },
-     skills: [{ id: 'multiples', title: 'Múltiples', summary: '…', theory: '<p>…</p>',
+     errors: { signe_oblidat: { title: '…', explain: '…' } },
+     skills: [{ id: 'suma', title: 'Sumar enters', summary: '…', theory: '<p>…</p>',
                 levels: ['…', '…', '…'], generate: (level) => ({ /* exercici */ }) }],
      visuals: [],   // opcional: [{ id, title, description, mount(container) → cleanup }]
    });
    ```
 3. Treu-lo de `js/topics/properament.js` i afegeix els scripts a `index.html` i a `tests/generators.test.js`.
 
-El mode repte, la pàgina de progrés i les estrelles funcionen automàticament per a qualsevol tema registrat.
+El mode repte, la pàgina de progrés i les estrelles funcionen automàticament per a qualsevol tema registrat. Opcionalment, `pathTitle` dona el títol del camí a l'inici («El camí de la divisibilitat»).
 
 ### Contracte d'un exercici
 

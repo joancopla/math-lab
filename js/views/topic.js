@@ -29,7 +29,7 @@
       <div class="action-grid">
         ${t.visuals.map((v) => `
           <a class="action-card" href="#/tema/${t.id}/visual/${v.id}">
-            <span class="action-emoji">🧊</span>
+            <span class="action-emoji">${v.emoji || '🧊'}</span>
             <div><h3>${v.title}</h3><p>${v.description}</p></div>
           </a>`).join('')}
         <a class="action-card is-challenge" href="#/repte/${t.id}">

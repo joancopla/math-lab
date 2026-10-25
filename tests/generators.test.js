@@ -31,7 +31,14 @@ const root = path.join(__dirname, '..');
   'js/topics/potencies/errors.js',
   'js/topics/potencies/exercises.js',
   'js/topics/potencies/visual.js',
+  'js/topics/potencies/pas-a-pas.js',
   'js/topics/potencies/index.js',
+  'js/topics/divisibilitat/errors.js',
+  'js/topics/divisibilitat/exercises.js',
+  'js/topics/divisibilitat/visual.js',
+  'js/topics/divisibilitat/garbell.js',
+  'js/topics/divisibilitat/descomposicio.js',
+  'js/topics/divisibilitat/index.js',
   'js/topics/properament.js',
 ].forEach((f) => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f }));
 
